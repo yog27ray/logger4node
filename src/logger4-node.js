@@ -12,11 +12,11 @@ class Logger4Node {
     static create(name) {
         return new Logger4Node(`${Logger4Node._ApplicationName}:${name}`);
     }
-    static isLogEnabled(logSeverity) {
-        return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
-    }
     static setApplicationName(applicationName) {
         Logger4Node._ApplicationName = applicationName;
+    }
+    static isLogEnabled(logSeverity) {
+        return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
     }
     get debugLogger() {
         return this._debugLogger;

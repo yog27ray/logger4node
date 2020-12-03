@@ -11,8 +11,8 @@ export declare class Logger4Node {
     private static LOG_LEVEL_ENABLED;
     private readonly _debugLogger;
     static create(name: string): Logger4Node;
+    static setApplicationName(applicationName: string): void;
     private static isLogEnabled;
-    private static setApplicationName;
     get debugLogger(): Debugger;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
