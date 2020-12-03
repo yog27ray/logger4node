@@ -22,25 +22,25 @@ class Logger4Node {
         return this._debugLogger;
     }
     verbose(formatter, ...args) {
-        this.log(0 /* VERBOSE */, formatter, args);
+        this.log(0 /* VERBOSE */, formatter, ...args);
     }
     info(formatter, ...args) {
-        this.log(1 /* INFO */, formatter, args);
+        this.log(1 /* INFO */, formatter, ...args);
     }
     warn(formatter, ...args) {
-        this.log(2 /* WARN */, formatter, args);
+        this.log(2 /* WARN */, formatter, ...args);
     }
     debug(formatter, ...args) {
-        this.log(3 /* DEBUG */, formatter, args);
+        this.log(3 /* DEBUG */, formatter, ...args);
     }
     error(formatter, ...args) {
-        this.log(4 /* ERROR */, formatter, args);
+        this.log(4 /* ERROR */, formatter, ...args);
     }
     log(logSeverity, formatter, ...args) {
         if (!Logger4Node.isLogEnabled(logSeverity)) {
             return;
         }
-        this._debugLogger(formatter, args);
+        this._debugLogger(formatter, ...args);
     }
 }
 exports.Logger4Node = Logger4Node;
