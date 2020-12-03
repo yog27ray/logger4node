@@ -15,7 +15,7 @@ class Logger4Node {
     static isLogEnabled(logSeverity) {
         return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
     }
-    static set ApplicationName(applicationName) {
+    static setApplicationName(applicationName) {
         Logger4Node._ApplicationName = applicationName;
     }
     get debugLogger() {

@@ -12,7 +12,7 @@ export declare class Logger4Node {
     private readonly _debugLogger;
     static create(name: string): Logger4Node;
     private static isLogEnabled;
-    private static set ApplicationName(value);
+    private static setApplicationName;
     get debugLogger(): Debugger;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
