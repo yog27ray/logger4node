@@ -28,7 +28,7 @@ export class Logger4Node {
     return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
   }
 
-  private static set ApplicationName(applicationName: string) {
+  private static setApplicationName(applicationName: string): void {
     Logger4Node._ApplicationName = applicationName;
   }
 
