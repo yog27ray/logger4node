@@ -1,6 +1,6 @@
 import debug, { Debugger } from 'debug';
 
-export enum LogSeverity {
+export const enum LogSeverity {
   VERBOSE,
   INFO,
   WARN,
@@ -19,6 +19,10 @@ export class Logger {
 
   private readonly _debugLogger: Debugger;
 
+  private static isLogEnabled(logSeverity: LogSeverity): boolean {
+    return Logger.LOG_LEVEL_ENABLED.includes(logSeverity);
+  }
+
   constructor(name: string) {
     this._debugLogger = debug(name);
   }
@@ -27,34 +31,30 @@ export class Logger {
     return this._debugLogger;
   }
 
-  verbose(formatter: any, ...args: Array<any>): void {
+  verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, formatter, args);
   }
 
-  info(formatter: any, ...args: Array<any>): void {
+  info(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.INFO, formatter, args);
   }
 
-  warn(formatter: any, ...args: Array<any>): void {
+  warn(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.WARN, formatter, args);
   }
 
-  debug(formatter: any, ...args: Array<any>): void {
+  debug(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.DEBUG, formatter, args);
   }
 
-  error(formatter: any, ...args: Array<any>): void {
+  error(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.ERROR, formatter, args);
   }
 
-  log(logSeverity: LogSeverity, formatter: any, ...args: Array<any>): void {
-    if (!this.isLogEnabled(logSeverity)) {
+  log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
+    if (!Logger.isLogEnabled(logSeverity)) {
       return;
     }
     this._debugLogger(formatter, args);
-  }
-
-  private isLogEnabled(logSeverity: LogSeverity): boolean {
-    return Logger.LOG_LEVEL_ENABLED.includes(logSeverity);
   }
 }

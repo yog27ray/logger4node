@@ -15,7 +15,6 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "lib": ["es2019", "dom"],
-    "types": ["node"],
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
