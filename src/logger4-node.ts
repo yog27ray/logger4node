@@ -38,30 +38,30 @@ export class Logger4Node {
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.VERBOSE, formatter, args);
+    this.log(LogSeverity.VERBOSE, formatter, ...args);
   }
 
   info(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.INFO, formatter, args);
+    this.log(LogSeverity.INFO, formatter, ...args);
   }
 
   warn(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.WARN, formatter, args);
+    this.log(LogSeverity.WARN, formatter, ...args);
   }
 
   debug(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.DEBUG, formatter, args);
+    this.log(LogSeverity.DEBUG, formatter, ...args);
   }
 
   error(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.ERROR, formatter, args);
+    this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
   log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
     if (!Logger4Node.isLogEnabled(logSeverity)) {
       return;
     }
-    this._debugLogger(formatter, args);
+    this._debugLogger(formatter, ...args);
   }
 
   private constructor(name: string) {
