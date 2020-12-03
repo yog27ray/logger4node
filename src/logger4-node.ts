@@ -25,12 +25,12 @@ export class Logger4Node {
     return new Logger4Node(`${Logger4Node._ApplicationName}:${name}`);
   }
 
-  private static isLogEnabled(logSeverity: LogSeverity): boolean {
-    return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
+  static setApplicationName(applicationName: string): void {
+    Logger4Node._ApplicationName = applicationName;
   }
 
-  private static setApplicationName(applicationName: string): void {
-    Logger4Node._ApplicationName = applicationName;
+  private static isLogEnabled(logSeverity: LogSeverity): boolean {
+    return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
   }
 
   get debugLogger(): Debugger {
