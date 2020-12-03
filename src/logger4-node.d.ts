@@ -7,10 +7,12 @@ export declare const enum LogSeverity {
     ERROR = 4
 }
 export declare class Logger4Node {
+    private static _ApplicationName;
     private static LOG_LEVEL_ENABLED;
     private readonly _debugLogger;
     static create(name: string): Logger4Node;
     private static isLogEnabled;
+    private static set ApplicationName(value);
     get debugLogger(): Debugger;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;

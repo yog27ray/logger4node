@@ -10,10 +10,13 @@ class Logger4Node {
         this._debugLogger = debug_1.default(name);
     }
     static create(name) {
-        return new Logger4Node(name);
+        return new Logger4Node(`${Logger4Node._ApplicationName}:${name}`);
     }
     static isLogEnabled(logSeverity) {
         return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
+    }
+    static set ApplicationName(applicationName) {
+        Logger4Node._ApplicationName = applicationName;
     }
     get debugLogger() {
         return this._debugLogger;
@@ -41,6 +44,7 @@ class Logger4Node {
     }
 }
 exports.Logger4Node = Logger4Node;
+Logger4Node._ApplicationName = '';
 Logger4Node.LOG_LEVEL_ENABLED = [
     0 /* VERBOSE */,
     1 /* INFO */,
