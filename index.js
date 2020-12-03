@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = void 0;
-const logger_1 = require("./src/logger");
-Object.defineProperty(exports, "Logger", { enumerable: true, get: function () { return logger_1.Logger; } });
+exports.Logger4Node = void 0;
+const logger4_node_1 = require("./src/logger4-node");
+Object.defineProperty(exports, "Logger4Node", { enumerable: true, get: function () { return logger4_node_1.Logger4Node; } });
 //# sourceMappingURL=index.js.map

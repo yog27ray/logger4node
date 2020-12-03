@@ -6,11 +6,11 @@ export declare const enum LogSeverity {
     DEBUG = 3,
     ERROR = 4
 }
-export declare class Logger {
+export declare class Logger4Node {
     private static LOG_LEVEL_ENABLED;
     private readonly _debugLogger;
+    static create(name: string): Logger4Node;
     private static isLogEnabled;
-    constructor(name: string);
     get debugLogger(): Debugger;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
@@ -18,4 +18,5 @@ export declare class Logger {
     debug(formatter: unknown, ...args: Array<unknown>): void;
     error(formatter: unknown, ...args: Array<unknown>): void;
     log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void;
+    private constructor();
 }
