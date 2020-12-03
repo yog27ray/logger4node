@@ -1,3 +1,3 @@
-import { Logger, LogSeverity } from './src/logger';
+import { Logger4Node, LogSeverity } from './src/logger4-node';
 
-export { Logger, LogSeverity };
+export { Logger4Node, LogSeverity };
