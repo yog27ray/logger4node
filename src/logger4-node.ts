@@ -9,6 +9,7 @@ export const enum LogSeverity {
 }
 
 export class Logger4Node {
+  private static _ApplicationName: string = '';
   private static LOG_LEVEL_ENABLED: Array<LogSeverity> = [
     LogSeverity.VERBOSE,
     LogSeverity.INFO,
@@ -20,11 +21,15 @@ export class Logger4Node {
   private readonly _debugLogger: Debugger;
 
   static create(name: string): Logger4Node {
-    return new Logger4Node(name);
+    return new Logger4Node(`${Logger4Node._ApplicationName}:${name}`);
   }
 
   private static isLogEnabled(logSeverity: LogSeverity): boolean {
     return Logger4Node.LOG_LEVEL_ENABLED.includes(logSeverity);
+  }
+
+  private static set ApplicationName(applicationName: string) {
+    Logger4Node._ApplicationName = applicationName;
   }
 
   get debugLogger(): Debugger {
