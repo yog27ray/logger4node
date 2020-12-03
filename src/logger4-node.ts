@@ -10,6 +10,7 @@ export const enum LogSeverity {
 
 export class Logger4Node {
   private static _ApplicationName: string = '';
+
   private static LOG_LEVEL_ENABLED: Array<LogSeverity> = [
     LogSeverity.VERBOSE,
     LogSeverity.INFO,
