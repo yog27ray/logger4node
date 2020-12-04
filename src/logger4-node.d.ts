@@ -1,10 +1,10 @@
 import { Debugger } from 'debug';
 export declare const enum LogSeverity {
-    VERBOSE = 0,
-    INFO = 1,
-    WARN = 2,
-    DEBUG = 3,
-    ERROR = 4
+    VERBOSE = "verbose",
+    INFO = "info",
+    WARN = "warn",
+    DEBUG = "debug",
+    ERROR = "error"
 }
 export declare class Logger4Node {
     private static _ApplicationName;
