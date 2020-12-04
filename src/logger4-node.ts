@@ -1,12 +1,20 @@
 import debug, { Debugger } from 'debug';
 
 export const enum LogSeverity {
-  VERBOSE,
-  INFO,
-  WARN,
-  DEBUG,
-  ERROR,
+  VERBOSE = 'verbose',
+  INFO = 'info',
+  WARN = 'warn',
+  DEBUG = 'debug',
+  ERROR = 'error',
 }
+
+const LogLevel: { [key in LogSeverity]: number } = {
+  verbose: 0,
+  info: 1,
+  warn: 2,
+  debug: 3,
+  error: 4,
+};
 
 export class Logger4Node {
   private static _ApplicationName: string = '';
@@ -17,7 +25,7 @@ export class Logger4Node {
     LogSeverity.WARN,
     LogSeverity.DEBUG,
     LogSeverity.ERROR,
-  ].filter((logLevel: LogSeverity) => Number(process.env.DEBUG_LEVEL || `${LogSeverity.DEBUG}`) <= logLevel);
+  ].filter((logLevel: LogSeverity) => (LogLevel[process.env.DEBUG_LEVEL] || LogLevel[LogSeverity.DEBUG]) <= LogLevel[logLevel]);
 
   private readonly _debugLogger: Debugger;
 
@@ -61,7 +69,7 @@ export class Logger4Node {
     if (!Logger4Node.isLogEnabled(logSeverity)) {
       return;
     }
-    this._debugLogger(formatter, ...args);
+    this._debugLogger(`${logSeverity} ${formatter}`, ...args);
   }
 
   private constructor(name: string) {
