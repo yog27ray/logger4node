@@ -9,11 +9,11 @@ export const enum LogSeverity {
 }
 
 const LogLevel: { [key in LogSeverity]: number } = {
-  verbose: 0,
-  info: 1,
-  warn: 2,
-  debug: 3,
-  error: 4,
+  verbose: 1,
+  info: 2,
+  warn: 3,
+  debug: 4,
+  error: 5,
 };
 
 export class Logger4Node {
