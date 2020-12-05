@@ -6,11 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger4Node = void 0;
 const debug_1 = __importDefault(require("debug"));
 const LogLevel = {
-    verbose: 0,
-    info: 1,
-    warn: 2,
-    debug: 3,
-    error: 4,
+    verbose: 1,
+    info: 2,
+    warn: 3,
+    debug: 4,
+    error: 5,
 };
 class Logger4Node {
     constructor(name) {
