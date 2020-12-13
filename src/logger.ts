@@ -59,7 +59,7 @@ export class Logger {
       if (!Logger.isLogEnabled(logSeverity)) {
         return;
       }
-      this._debugLogger(`${logSeverity} ${formatter as string}`, ...args);
+      this._debugLogger(logSeverity, formatter, ...args);
     }
 
     constructor(name: string) {
