@@ -40,6 +40,7 @@
     }
   ],
   "rules": {
+    "no-console": [0],
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/no-unused-vars": ["error"],
@@ -66,54 +67,9 @@
     "@typescript-eslint/no-unsafe-assignment": [0],
     "import/prefer-default-export": [0],
     "no-use-before-define": ["error", { "functions": true, "classes": true }],
-    "import/no-unresolved": [
-      0
-    ],
-    "no-underscore-dangle": [
-      0
-    ],
+    "import/no-unresolved": [0],
+    "no-underscore-dangle": [0],
     "no-undef": 0,
-    "new-cap": [
-      2,
-      {
-        "capIsNewExceptions": [
-          "NgModule",
-          "ViewChild",
-          "Output",
-          "Injectable",
-          "Component",
-          "Directive",
-          "HostListener",
-          "HostBinding",
-          "Input",
-          "express.Router",
-          "DataTypes.STRING",
-          "DataTypes.CHAR",
-          "DataTypes.TEXT",
-          "DataTypes.INTEGER",
-          "DataTypes.BIGINT",
-          "DataTypes.FLOAT",
-          "DataTypes.REAL",
-          "DataTypes.DOUBLE",
-          "DataTypes.DECIMAL",
-          "DataTypes.BOOLEAN",
-          "DataTypes.TIME",
-          "DataTypes.DATE",
-          "DataTypes.DATEONLY",
-          "DataTypes.HSTORE",
-          "DataTypes.JSON",
-          "DataTypes.JSONB",
-          "DataTypes.NOW",
-          "DataTypes.BLOB",
-          "DataTypes.RANGE",
-          "DataTypes.UUID",
-          "DataTypes.UUIDV1",
-          "DataTypes.UUIDV4",
-          "DataTypes.VIRTUAL",
-          "DataTypes.ENUM",
-          "DataTypes.ARRAY"
-        ]
-      }
-    ]
+    "new-cap": [2, { "capIsNewExceptions": [] }]
   }
 }
