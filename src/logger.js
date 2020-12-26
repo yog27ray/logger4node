@@ -42,8 +42,6 @@ const doesNotMatches = [];
         }
     }
 });
-console.log('!!', matches);
-console.log('!!a', doesNotMatches);
 class Logger {
     constructor(name) {
         this.name = name;
