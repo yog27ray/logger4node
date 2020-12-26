@@ -1,4 +1,3 @@
-import { Debugger } from 'debug';
 export declare const enum LogSeverity {
     VERBOSE = "verbose",
     INFO = "info",
@@ -7,10 +6,12 @@ export declare const enum LogSeverity {
     ERROR = "error"
 }
 export declare class Logger {
+    private name;
     private static LOG_LEVEL_ENABLED;
-    private readonly _debugLogger;
+    private enabled;
+    static matches(value: string): boolean;
+    static doesNotMatches(value: string): boolean;
     private static isLogEnabled;
-    get debugLogger(): Debugger;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
     warn(formatter: unknown, ...args: Array<unknown>): void;
