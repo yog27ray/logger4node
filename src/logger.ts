@@ -48,8 +48,6 @@ const doesNotMatches: Array<string> = [];
   }
 });
 
-console.log('!!', matches);
-console.log('!!a', doesNotMatches);
 export class Logger {
   private static LOG_LEVEL_ENABLED: Array<LogSeverity> = [
     LogSeverity.VERBOSE,
