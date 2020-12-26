@@ -41,7 +41,7 @@ class Logger {
         if (!Logger.isLogEnabled(logSeverity)) {
             return;
         }
-        this._debugLogger(logSeverity, formatter, ...args);
+        this._debugLogger(formatter, ...args, logSeverity);
     }
 }
 exports.Logger = Logger;
