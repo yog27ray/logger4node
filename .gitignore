@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/.gitignore
+.idea/codeStyles/
+.idea/inspectionProfiles/
+.idea/jsLibraryMappings.xml
+.idea/logger4node.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+Would skip repository dist/
+node_modules/
