@@ -20,7 +20,7 @@ const Color = {
     info: '\x1b[35m',
     warn: '\x1b[33m',
     debug: '\x1b[34m',
-    error: '\x1b[31m',
+    error: '\x1b[31m', // Red
 };
 const matches = [];
 const doesNotMatches = [];
@@ -49,7 +49,7 @@ class Logger {
         this.enabled = Logger.matches(name) && !Logger.doesNotMatches(name);
     }
     static matches(value) {
-        return matches.every((pattern) => new RegExp(`^${pattern}$`).test(value));
+        return matches.some((pattern) => new RegExp(`^${pattern}$`).test(value));
     }
     static doesNotMatches(value) {
         return doesNotMatches.some((pattern) => new RegExp(`^${pattern}$`).test(value));
