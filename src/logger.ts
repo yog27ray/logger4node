@@ -8,7 +8,7 @@ export const enum LogSeverity {
   ERROR = 'error',
 }
 
-const LogLevel: { [key in LogSeverity]: number } = {
+export const LogLevel: { [key in LogSeverity]: number } = {
   verbose: 1,
   info: 2,
   warn: 3,
@@ -27,49 +27,64 @@ const Color: { [key in LogSeverity]: string; } & { reset: string; application: s
   error: '\x1b[31m', // Red
 };
 
-const matches: Array<string> = [];
-const doesNotMatches: Array<string> = [];
-(process.env.DEBUG || '*').split(',').forEach((key_: string) => {
-  let key = key_;
-  let operator = '+';
-  if (key[0] === '-') {
-    operator = '-';
-    key = key.substr(1, key.length);
-  }
-  key = key.replace(new RegExp('\\*', 'g'), '.*');
-  switch (operator) {
-    case '-': {
-      doesNotMatches.push(key);
-      return;
+function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
+  const positive: Array<string> = [];
+  const negative: Array<string> = [];
+  input.split(',').forEach((key_: string) => {
+    let key = key_;
+    let operator = '+';
+    if (key[0] === '-') {
+      operator = '-';
+      key = key.substr(1, key.length);
     }
-    default: {
-      matches.push(key);
+    key = key.replace(/\*/g, '.*');
+    switch (operator) {
+      case '-': {
+        negative.push(key);
+        return;
+      }
+      default: {
+        positive.push(key);
+      }
     }
-  }
-});
+  });
+  return [positive, negative];
+}
+
+let positive: Array<string> = [];
+let negative: Array<string> = [];
+let minLogLevelEnabled = LogLevel.debug;
+
+const LOG_PATTERN: { [key in LogSeverity]: { negative: Array<string>; positive: Array<string>; } } = {
+  [LogSeverity.VERBOSE]: { positive: [], negative: [] },
+  [LogSeverity.INFO]: { positive: [], negative: [] },
+  [LogSeverity.WARN]: { positive: [], negative: [] },
+  [LogSeverity.DEBUG]: { positive: [], negative: [] },
+  [LogSeverity.ERROR]: { positive: [], negative: [] },
+};
+
+function isNotMatchWithPatterns(patterns: Array<string>, value: string): boolean {
+  return patterns.every((pattern: string) => !new RegExp(`^${pattern}$`).test(value));
+}
+
+function isMatchWithPatterns(patterns: Array<string>, value: string): boolean {
+  return patterns.some((pattern: string) => new RegExp(`^${pattern}$`).test(value));
+}
+
+export function setLogLevel(logSeverity: LogSeverity): void {
+  minLogLevelEnabled = LogLevel[logSeverity] || LogLevel[LogSeverity.DEBUG];
+}
+
+export function setLogPattern(pattern: string): void {
+  ([positive, negative] = generateMatchAndDoesNotMatchArray(pattern));
+}
+
+export function setLogSeverityPattern(level: LogSeverity, pattern: string): void {
+  ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
+}
 
 export class Logger {
-  private static LOG_LEVEL_ENABLED: Array<LogSeverity> = [
-    LogSeverity.VERBOSE,
-    LogSeverity.INFO,
-    LogSeverity.WARN,
-    LogSeverity.DEBUG,
-    LogSeverity.ERROR,
-  ].filter((logLevel: LogSeverity) => (LogLevel[process.env.DEBUG_LEVEL] || LogLevel[LogSeverity.DEBUG]) <= LogLevel[logLevel]);
-
-  private enabled: boolean = false;
-
-  static matches(value: string): boolean {
-    return matches.every((pattern: string) => new RegExp(`^${pattern}$`).test(value));
-  }
-
-  static doesNotMatches(value: string): boolean {
-    return doesNotMatches.some((pattern: string) => new RegExp(`^${pattern}$`).test(value));
-  }
-
-  private static isLogEnabled(logSeverity: LogSeverity): boolean {
-    return Logger.LOG_LEVEL_ENABLED.includes(logSeverity);
-  }
+  private readonly name: string;
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, formatter, ...args);
@@ -91,18 +106,40 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
-    if (!Logger.isLogEnabled(logSeverity) || !this.enabled) {
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  private isLogEnabled(logSeverity: LogSeverity): boolean {
+    if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
+      return false;
+    }
+    if (isMatchWithPatterns(LOG_PATTERN[logSeverity].positive, this.name)) {
+      return true;
+    }
+    if (LogLevel[logSeverity] < minLogLevelEnabled) {
+      return false;
+    }
+    if (!isNotMatchWithPatterns(negative, this.name)) {
+      return false;
+    }
+    if (isMatchWithPatterns(positive, this.name)) {
+      return true;
+    }
+    return false;
+  }
+
+  private log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
+    if (!this.isLogEnabled(logSeverity)) {
       return;
     }
     console.log(
-      Color.severity, logSeverity,
-      Color.application, this.name,
-      Color[logSeverity], util.format(formatter, ...args),
+      Color.severity,
+      logSeverity,
+      Color.application,
+      this.name,
+      Color[logSeverity],
+      util.format(formatter, ...args),
       Color.reset);
-  }
-
-  constructor(private name: string) {
-    this.enabled = Logger.matches(name) && !Logger.doesNotMatches(name);
   }
 }
