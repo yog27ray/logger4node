@@ -2,6 +2,7 @@ import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeveri
 
 export class Logger4Node {
   private readonly _applicationName: string;
+
   private stringOnly: boolean;
 
   static setLogLevel(logSeverity: LogSeverity): void {
