@@ -2,6 +2,7 @@ import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeveri
 
 export class Logger4Node {
   private readonly _applicationName: string;
+  private stringOnly: boolean;
 
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
@@ -19,8 +20,12 @@ export class Logger4Node {
     this._applicationName = applicationName;
   }
 
-  instance(name: string): Logger {
-    return new Logger(`${this._applicationName}:${name}`);
+  setOnlyStringLogging(stringOnly: boolean): void {
+    this.stringOnly = stringOnly;
+  }
+
+  instance(name: string, { stringOnly = this.stringOnly }: { stringOnly?: boolean } = {}): Logger {
+    return new Logger(`${this._applicationName}:${name}`, stringOnly);
   }
 }
 

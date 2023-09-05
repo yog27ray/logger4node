@@ -86,6 +86,8 @@ export function setLogSeverityPattern(level: LogSeverity, pattern: string): void
 export class Logger {
   private readonly name: string;
 
+  private readonly stringOnly: boolean = false;
+
   verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, formatter, ...args);
   }
@@ -106,8 +108,9 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  constructor(name: string) {
+  constructor(name: string, stringOnly: boolean) {
     this.name = name;
+    this.stringOnly = stringOnly;
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
@@ -123,10 +126,7 @@ export class Logger {
     if (!isNotMatchWithPatterns(negative, this.name)) {
       return false;
     }
-    if (isMatchWithPatterns(positive, this.name)) {
-      return true;
-    }
-    return false;
+    return isMatchWithPatterns(positive, this.name);
   }
 
   private log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
@@ -139,7 +139,22 @@ export class Logger {
       Color.application,
       this.name,
       Color[logSeverity],
-      util.format(formatter, ...args),
+      util.format(formatter, ...this.transformArgs(...args)),
       Color.reset);
+  }
+
+  private transformArgs(...args: Array<unknown>): Array<unknown> {
+    return args.map((each: unknown) => {
+      if (!this.stringOnly) {
+        return each;
+      }
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      if (each instanceof Error) {
+        return each;
+      }
+      return JSON.stringify(each);
+    });
   }
 }
