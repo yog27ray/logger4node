@@ -3,9 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger4Node = void 0;
 const logger_1 = require("./logger");
 class Logger4Node {
-    constructor(applicationName) {
-        this._applicationName = applicationName;
-    }
     static setLogLevel(logSeverity) {
         (0, logger_1.setLogLevel)(logSeverity);
     }
@@ -15,8 +12,14 @@ class Logger4Node {
     static setLogSeverityPattern(level, pattern) {
         (0, logger_1.setLogSeverityPattern)(level, pattern);
     }
-    instance(name) {
-        return new logger_1.Logger(`${this._applicationName}:${name}`);
+    constructor(applicationName) {
+        this._applicationName = applicationName;
+    }
+    setOnlyStringLogging(stringOnly) {
+        this.stringOnly = stringOnly;
+    }
+    instance(name, { stringOnly = this.stringOnly } = {}) {
+        return new logger_1.Logger(`${this._applicationName}:${name}`, stringOnly);
     }
 }
 exports.Logger4Node = Logger4Node;

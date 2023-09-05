@@ -74,9 +74,6 @@ function setLogSeverityPattern(level, pattern) {
 }
 exports.setLogSeverityPattern = setLogSeverityPattern;
 class Logger {
-    constructor(name) {
-        this.name = name;
-    }
     verbose(formatter, ...args) {
         this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
     }
@@ -92,6 +89,11 @@ class Logger {
     error(formatter, ...args) {
         this.log("error" /* LogSeverity.ERROR */, formatter, ...args);
     }
+    constructor(name, stringOnly) {
+        this.stringOnly = false;
+        this.name = name;
+        this.stringOnly = stringOnly;
+    }
     isLogEnabled(logSeverity) {
         if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
             return false;
@@ -105,16 +107,27 @@ class Logger {
         if (!isNotMatchWithPatterns(negative, this.name)) {
             return false;
         }
-        if (isMatchWithPatterns(positive, this.name)) {
-            return true;
-        }
-        return false;
+        return isMatchWithPatterns(positive, this.name);
     }
     log(logSeverity, formatter, ...args) {
         if (!this.isLogEnabled(logSeverity)) {
             return;
         }
-        console.log(Color.severity, logSeverity, Color.application, this.name, Color[logSeverity], util_1.default.format(formatter, ...args), Color.reset);
+        console.log(Color.severity, logSeverity, Color.application, this.name, Color[logSeverity], util_1.default.format(formatter, ...this.transformArgs(...args)), Color.reset);
+    }
+    transformArgs(...args) {
+        return args.map((each) => {
+            if (!this.stringOnly) {
+                return each;
+            }
+            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+                return each;
+            }
+            if (each instanceof Error) {
+                return each;
+            }
+            return JSON.stringify(each);
+        });
     }
 }
 exports.Logger = Logger;
