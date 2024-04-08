@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.LogLevel = void 0;
+exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = void 0;
 const util_1 = __importDefault(require("util"));
 exports.LogLevel = {
     verbose: 1,
@@ -12,15 +12,12 @@ exports.LogLevel = {
     debug: 4,
     error: 5,
 };
-const Color = {
-    severity: '\x1b[33m',
-    application: '\x1b[36m',
-    reset: '\x1b[0m',
-    verbose: '\x1b[37m',
-    info: '\x1b[35m',
-    warn: '\x1b[33m',
-    debug: '\x1b[34m',
-    error: '\x1b[31m', // Red
+exports.DisplaySeverityMap = {
+    verbose: 'Verbose',
+    info: 'Info',
+    warn: 'Warn',
+    debug: 'Debug',
+    error: 'Error',
 };
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
@@ -30,7 +27,7 @@ function generateMatchAndDoesNotMatchArray(input = '') {
         let operator = '+';
         if (key[0] === '-') {
             operator = '-';
-            key = key.substr(1, key.length);
+            key = key.substring(1, key.length);
         }
         key = key.replace(/\*/g, '.*');
         switch (operator) {
@@ -113,7 +110,7 @@ class Logger {
         if (!this.isLogEnabled(logSeverity)) {
             return;
         }
-        console.log(Color.severity, logSeverity, Color.application, this.name, Color[logSeverity], util_1.default.format(formatter, ...this.transformArgs(...args)), Color.reset);
+        console.log(exports.DisplaySeverityMap[logSeverity], this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
     }
     transformArgs(...args) {
         return args.map((each) => {

@@ -8,6 +8,9 @@ export declare const enum LogSeverity {
 export declare const LogLevel: {
     [key in LogSeverity]: number;
 };
+export declare const DisplaySeverityMap: {
+    [key in LogSeverity]: string;
+};
 export declare function setLogLevel(logSeverity: LogSeverity): void;
 export declare function setLogPattern(pattern: string): void;
 export declare function setLogSeverityPattern(level: LogSeverity, pattern: string): void;
