@@ -1,6 +1,6 @@
 {
   "name": "logger4node",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,18 +22,18 @@
     "util": "^0.12.4"
   },
   "devDependencies": {
-    "@types/chai": "4.3.6",
+    "@types/chai": "4.3.11",
     "@types/debug": "4.1.8",
-    "@types/mocha": "10.0.1",
+    "@types/mocha": "10.0.6",
     "@types/node": "18.17.14",
-    "@types/sinon": "10.0.16",
+    "@types/sinon": "10.0.20",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
-    "chai": "4.3.8",
+    "chai": "4.3.10",
     "eslint": "8.48.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-import": "2.29.1",
     "eslint-plugin-promise": "6.1.1",
     "eslint-plugin-typescript": "0.14.0",
     "mocha": "10.2.0",
