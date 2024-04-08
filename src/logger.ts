@@ -16,15 +16,12 @@ export const LogLevel: { [key in LogSeverity]: number } = {
   error: 5,
 };
 
-const Color: { [key in LogSeverity]: string; } & { reset: string; application: string; severity: string; } = {
-  severity: '\x1b[33m', // yellow
-  application: '\x1b[36m', // cyan
-  reset: '\x1b[0m', // reset
-  verbose: '\x1b[37m', // white
-  info: '\x1b[35m', // magenta
-  warn: '\x1b[33m', // yellow
-  debug: '\x1b[34m', // blue
-  error: '\x1b[31m', // Red
+export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
+  verbose: 'Verbose',
+  info: 'Info',
+  warn: 'Warn',
+  debug: 'Debug',
+  error: 'Error',
 };
 
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
@@ -35,7 +32,7 @@ function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, 
     let operator = '+';
     if (key[0] === '-') {
       operator = '-';
-      key = key.substr(1, key.length);
+      key = key.substring(1, key.length);
     }
     key = key.replace(/\*/g, '.*');
     switch (operator) {
@@ -134,13 +131,9 @@ export class Logger {
       return;
     }
     console.log(
-      Color.severity,
-      logSeverity,
-      Color.application,
+      DisplaySeverityMap[logSeverity],
       this.name,
-      Color[logSeverity],
-      util.format(formatter, ...this.transformArgs(...args)),
-      Color.reset);
+      util.format(formatter, ...this.transformArgs(...args)));
   }
 
   private transformArgs(...args: Array<unknown>): Array<unknown> {
