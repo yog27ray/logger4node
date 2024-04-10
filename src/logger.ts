@@ -131,7 +131,7 @@ export class Logger {
       return;
     }
     console.log(
-      DisplaySeverityMap[logSeverity],
+      `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
       util.format(formatter, ...this.transformArgs(...args)));
   }
