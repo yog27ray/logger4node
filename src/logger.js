@@ -110,7 +110,7 @@ class Logger {
         if (!this.isLogEnabled(logSeverity)) {
             return;
         }
-        console.log(exports.DisplaySeverityMap[logSeverity], this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
     }
     transformArgs(...args) {
         return args.map((each) => {
