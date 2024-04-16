@@ -93,8 +93,8 @@ export class Logger {
       .map((each: { stack?: string; }): string => each.stack).join('\n|\n');
   }
 
-  private static jsonTransformArgs(formatter: unknown, ...args: Array<unknown>): string {
-    return util.format(formatter, ...args.map((each: unknown) => {
+  private static jsonTransformArgs(...args: Array<unknown>): string {
+    return util.format(...args.map((each: unknown) => {
       if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
         return each;
       }
