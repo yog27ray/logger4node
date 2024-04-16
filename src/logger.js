@@ -76,8 +76,8 @@ class Logger {
             .filter((each) => (each instanceof Error))
             .map((each) => each.stack).join('\n|\n');
     }
-    static jsonTransformArgs(formatter, ...args) {
-        return util_1.default.format(formatter, ...args.map((each) => {
+    static jsonTransformArgs(...args) {
+        return util_1.default.format(...args.map((each) => {
             if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
                 return each;
             }
