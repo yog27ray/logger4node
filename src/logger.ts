@@ -85,6 +85,23 @@ export class Logger {
 
   private readonly stringOnly: boolean = false;
 
+  private readonly jsonLogging: boolean = false;
+
+  private static errorStack(...args: Array<unknown>): string {
+    return args
+      .filter((each): boolean => (each instanceof Error))
+      .map((each: { stack?: string; }): string => each.stack).join('\n|\n');
+  }
+
+  private static jsonTransformArgs(formatter: unknown, ...args: Array<unknown>): string {
+    return util.format(formatter, ...args.map((each: unknown) => {
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      return JSON.stringify(each);
+    }));
+  }
+
   verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, formatter, ...args);
   }
@@ -105,9 +122,10 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  constructor(name: string, stringOnly: boolean) {
+  constructor(name: string, stringOnly: boolean, jsonLogging: boolean) {
     this.name = name;
     this.stringOnly = stringOnly;
+    this.jsonLogging = jsonLogging;
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
@@ -128,6 +146,13 @@ export class Logger {
 
   private log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
     if (!this.isLogEnabled(logSeverity)) {
+      return;
+    }
+    if (this.jsonLogging) {
+      console.log(`{"className":"${this.name
+      }","level":"${logSeverity
+      }","message":"${Logger.jsonTransformArgs(formatter, ...args)
+      }","stack":"${Logger.errorStack(formatter, ...args)}"}`);
       return;
     }
     console.log(

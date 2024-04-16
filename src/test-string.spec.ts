@@ -15,7 +15,7 @@ function printLogsInDifferentType(logger: Logger): void {
   logger.error('this is ', 1, true, { key1: 1, value: 2 });
 }
 
-describe('Logger4node', () => {
+describe('Logger4nodeString', () => {
   context('logging in different level', () => {
     let callbackSpy: SinonSpy;
     let logger1: Logger4Node;
