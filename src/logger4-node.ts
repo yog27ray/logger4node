@@ -5,6 +5,8 @@ export class Logger4Node {
 
   private stringOnly: boolean;
 
+  private jsonLogging: boolean;
+
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
   }
@@ -25,8 +27,12 @@ export class Logger4Node {
     this.stringOnly = stringOnly;
   }
 
+  setJsonLogging(jsonLogging: boolean): void {
+    this.jsonLogging = jsonLogging;
+  }
+
   instance(name: string, { stringOnly = this.stringOnly }: { stringOnly?: boolean } = {}): Logger {
-    return new Logger(`${this._applicationName}:${name}`, stringOnly);
+    return new Logger(`${this._applicationName}:${name}`, stringOnly, this.jsonLogging);
   }
 }
 
