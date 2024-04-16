@@ -18,8 +18,11 @@ class Logger4Node {
     setOnlyStringLogging(stringOnly) {
         this.stringOnly = stringOnly;
     }
+    setJsonLogging(jsonLogging) {
+        this.jsonLogging = jsonLogging;
+    }
     instance(name, { stringOnly = this.stringOnly } = {}) {
-        return new logger_1.Logger(`${this._applicationName}:${name}`, stringOnly);
+        return new logger_1.Logger(`${this._applicationName}:${name}`, stringOnly, this.jsonLogging);
     }
 }
 exports.Logger4Node = Logger4Node;

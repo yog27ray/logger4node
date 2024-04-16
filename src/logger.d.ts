@@ -17,12 +17,15 @@ export declare function setLogSeverityPattern(level: LogSeverity, pattern: strin
 export declare class Logger {
     private readonly name;
     private readonly stringOnly;
+    private readonly jsonLogging;
+    private static errorStack;
+    private static jsonTransformArgs;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
     warn(formatter: unknown, ...args: Array<unknown>): void;
     debug(formatter: unknown, ...args: Array<unknown>): void;
     error(formatter: unknown, ...args: Array<unknown>): void;
-    constructor(name: string, stringOnly: boolean);
+    constructor(name: string, stringOnly: boolean, jsonLogging: boolean);
     private isLogEnabled;
     private log;
     private transformArgs;
