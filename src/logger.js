@@ -70,7 +70,15 @@ function setLogSeverityPattern(level, pattern) {
     ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
 }
 exports.setLogSeverityPattern = setLogSeverityPattern;
+let stringOnly = false;
+let jsonLogging = false;
 class Logger {
+    static setOnlyStringLogging(vaue) {
+        stringOnly = vaue;
+    }
+    static setJsonLogging(value) {
+        jsonLogging = value;
+    }
     static errorStack(...args) {
         return args
             .filter((each) => (each instanceof Error))
@@ -83,6 +91,20 @@ class Logger {
             }
             return JSON.stringify(each);
         }));
+    }
+    static transformArgs(...args) {
+        return args.map((each) => {
+            if (!stringOnly) {
+                return each;
+            }
+            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+                return each;
+            }
+            if (each instanceof Error) {
+                return each;
+            }
+            return JSON.stringify(each);
+        });
     }
     verbose(formatter, ...args) {
         this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
@@ -99,12 +121,8 @@ class Logger {
     error(formatter, ...args) {
         this.log("error" /* LogSeverity.ERROR */, formatter, ...args);
     }
-    constructor(name, stringOnly, jsonLogging) {
-        this.stringOnly = false;
-        this.jsonLogging = false;
+    constructor(name) {
         this.name = name;
-        this.stringOnly = stringOnly;
-        this.jsonLogging = jsonLogging;
     }
     isLogEnabled(logSeverity) {
         if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
@@ -125,25 +143,11 @@ class Logger {
         if (!this.isLogEnabled(logSeverity)) {
             return;
         }
-        if (this.jsonLogging) {
+        if (jsonLogging) {
             console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`);
             return;
         }
-        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
-    }
-    transformArgs(...args) {
-        return args.map((each) => {
-            if (!this.stringOnly) {
-                return each;
-            }
-            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-                return each;
-            }
-            if (each instanceof Error) {
-                return each;
-            }
-            return JSON.stringify(each);
-        });
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...Logger.transformArgs(...args)));
     }
 }
 exports.Logger = Logger;

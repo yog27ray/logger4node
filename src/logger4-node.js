@@ -15,14 +15,16 @@ class Logger4Node {
     constructor(applicationName) {
         this._applicationName = applicationName;
     }
+    // eslint-disable-next-line class-methods-use-this
     setOnlyStringLogging(stringOnly) {
-        this.stringOnly = stringOnly;
+        logger_1.Logger.setOnlyStringLogging(stringOnly);
     }
+    // eslint-disable-next-line class-methods-use-this
     setJsonLogging(jsonLogging) {
-        this.jsonLogging = jsonLogging;
+        logger_1.Logger.setJsonLogging(jsonLogging);
     }
-    instance(name, { stringOnly = this.stringOnly } = {}) {
-        return new logger_1.Logger(`${this._applicationName}:${name}`, stringOnly, this.jsonLogging);
+    instance(name) {
+        return new logger_1.Logger(`${this._applicationName}:${name}`);
     }
 }
 exports.Logger4Node = Logger4Node;
