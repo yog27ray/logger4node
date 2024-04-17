@@ -109,6 +109,23 @@ export class Logger {
     }));
   }
 
+  private readonly jsonLogging: boolean = false;
+
+  private static errorStack(...args: Array<unknown>): string {
+    return args
+      .filter((each): boolean => (each instanceof Error))
+      .map((each: { stack?: string; }): string => each.stack).join('\n|\n');
+  }
+
+  private static jsonTransformArgs(formatter: unknown, ...args: Array<unknown>): string {
+    return util.format(formatter, ...args.map((each: unknown) => {
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      return JSON.stringify(each);
+    }));
+  }
+
   verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, formatter, ...args);
   }

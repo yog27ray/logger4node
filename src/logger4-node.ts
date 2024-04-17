@@ -7,6 +7,8 @@ export class Logger4Node {
 
   private jsonLogging: boolean = false;
 
+  private jsonLogging: boolean;
+
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
   }
