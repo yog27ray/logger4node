@@ -15,18 +15,16 @@ export class Logger4Node {
     setLogSeverityPattern(level, pattern);
   }
 
-  constructor(applicationName: string) {
-    this._applicationName = applicationName;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  setOnlyStringLogging(stringOnly: boolean): void {
+  static setOnlyStringLogging(stringOnly: boolean): void {
     Logger.setOnlyStringLogging(stringOnly);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  setJsonLogging(jsonLogging: boolean): void {
+  static setJsonLogging(jsonLogging: boolean): void {
     Logger.setJsonLogging(jsonLogging);
+  }
+
+  constructor(applicationName: string) {
+    this._applicationName = applicationName;
   }
 
   instance(name: string): Logger {
