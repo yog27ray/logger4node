@@ -80,12 +80,19 @@ export function setLogSeverityPattern(level: LogSeverity, pattern: string): void
   ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
 }
 
+let stringOnly: boolean = false;
+let jsonLogging: boolean = false;
+
 export class Logger {
   private readonly name: string;
 
-  private readonly stringOnly: boolean = false;
+  static setOnlyStringLogging(vaue: boolean): void {
+    stringOnly = vaue;
+  }
 
-  private readonly jsonLogging: boolean = false;
+  static setJsonLogging(value: boolean): void {
+    jsonLogging = value;
+  }
 
   private static errorStack(...args: Array<unknown>): string {
     return args
@@ -100,6 +107,21 @@ export class Logger {
       }
       return JSON.stringify(each);
     }));
+  }
+
+  private static transformArgs(...args: Array<unknown>): Array<unknown> {
+    return args.map((each: unknown) => {
+      if (!stringOnly) {
+        return each;
+      }
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      if (each instanceof Error) {
+        return each;
+      }
+      return JSON.stringify(each);
+    });
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
@@ -122,10 +144,8 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  constructor(name: string, stringOnly: boolean, jsonLogging: boolean) {
+  constructor(name: string) {
     this.name = name;
-    this.stringOnly = stringOnly;
-    this.jsonLogging = jsonLogging;
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
@@ -148,7 +168,7 @@ export class Logger {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
-    if (this.jsonLogging) {
+    if (jsonLogging) {
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
@@ -158,21 +178,6 @@ export class Logger {
     console.log(
       `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
-      util.format(formatter, ...this.transformArgs(...args)));
-  }
-
-  private transformArgs(...args: Array<unknown>): Array<unknown> {
-    return args.map((each: unknown) => {
-      if (!this.stringOnly) {
-        return each;
-      }
-      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-        return each;
-      }
-      if (each instanceof Error) {
-        return each;
-      }
-      return JSON.stringify(each);
-    });
+      util.format(formatter, ...Logger.transformArgs(...args)));
   }
 }

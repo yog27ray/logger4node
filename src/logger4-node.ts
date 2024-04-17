@@ -3,10 +3,6 @@ import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeveri
 export class Logger4Node {
   private readonly _applicationName: string;
 
-  private stringOnly: boolean;
-
-  private jsonLogging: boolean;
-
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
   }
@@ -23,16 +19,18 @@ export class Logger4Node {
     this._applicationName = applicationName;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   setOnlyStringLogging(stringOnly: boolean): void {
-    this.stringOnly = stringOnly;
+    Logger.setOnlyStringLogging(stringOnly);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   setJsonLogging(jsonLogging: boolean): void {
-    this.jsonLogging = jsonLogging;
+    Logger.setJsonLogging(jsonLogging);
   }
 
-  instance(name: string, { stringOnly = this.stringOnly }: { stringOnly?: boolean } = {}): Logger {
-    return new Logger(`${this._applicationName}:${name}`, stringOnly, this.jsonLogging);
+  instance(name: string): Logger {
+    return new Logger(`${this._applicationName}:${name}`);
   }
 }
 
