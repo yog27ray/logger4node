@@ -4,8 +4,8 @@ export declare class Logger4Node {
     static setLogLevel(logSeverity: LogSeverity): void;
     static setLogPattern(pattern: string): void;
     static setLogSeverityPattern(level: LogSeverity, pattern: string): void;
+    static setOnlyStringLogging(stringOnly: boolean): void;
+    static setJsonLogging(jsonLogging: boolean): void;
     constructor(applicationName: string);
-    setOnlyStringLogging(stringOnly: boolean): void;
-    setJsonLogging(jsonLogging: boolean): void;
     instance(name: string): Logger;
 }
