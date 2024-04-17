@@ -32,14 +32,9 @@ export class Logger4Node {
   }
 
   instance(name: string): Logger {
-    const logger = this;
     return new Logger(`${this._applicationName}:${name}`, {
-      get jsonLogging(): boolean {
-        return logger.jsonLogging;
-      },
-      get stringLogging(): boolean {
-        return logger.stringLogging;
-      },
+      jsonLogging: () => this.jsonLogging,
+      stringLogging: () => this.stringLogging,
     });
   }
 }

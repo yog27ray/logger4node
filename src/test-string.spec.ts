@@ -5,9 +5,9 @@ import { Logger4Node } from './logger4-node';
 
 function printLogsInDifferentLevel(logger: Logger): void {
   logger.verbose('verbose log');
+  logger.debug('debug log');
   logger.info('info log');
   logger.warn('warn log');
-  logger.debug('debug log');
   logger.error('error log');
 }
 
@@ -43,9 +43,9 @@ describe('Logger4nodeString', () => {
       printLogsInDifferentLevel(logger1Instance1);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Verbose: Logger1:Instance1 verbose log');
-      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
-      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
-      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
+      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
       expect(callbackSpy.getCall(4).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
     });
 
@@ -59,30 +59,30 @@ describe('Logger4nodeString', () => {
       printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Verbose: Logger2:Instance1 verbose log');
-      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Info: Logger2:Instance1 info log');
-      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Warn: Logger2:Instance1 warn log');
-      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Debug: Logger2:Instance1 debug log');
+      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Debug: Logger2:Instance1 debug log');
+      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Info: Logger2:Instance1 info log');
+      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Warn: Logger2:Instance1 warn log');
       expect(callbackSpy.getCall(4).args.join(' ')).to.equal('Error: Logger2:Instance1 error log');
     });
 
     it('should print only Logger1 Debug  and above logs', () => {
-      Logger4Node.setLogLevel(LogSeverity.DEBUG);
+      Logger4Node.setLogLevel(LogSeverity.WARN);
       printLogsInDifferentLevel(logger1Instance1);
       printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(2);
-      expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
       expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
     });
 
     it('should print only Logger1 Debug  and above logs and logger2 only Debug: ', () => {
-      Logger4Node.setLogLevel(LogSeverity.DEBUG);
-      Logger4Node.setLogSeverityPattern(LogSeverity.DEBUG, 'Logger2:*');
+      Logger4Node.setLogLevel(LogSeverity.WARN);
+      Logger4Node.setLogSeverityPattern(LogSeverity.WARN, 'Logger2:*');
       printLogsInDifferentLevel(logger1Instance1);
       printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(3);
-      expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
       expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
-      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Debug: Logger2:Instance1 debug log');
+      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Warn: Logger2:Instance1 warn log');
     });
 
     it('should print both instance of Logger1', () => {
@@ -90,14 +90,14 @@ describe('Logger4nodeString', () => {
       printLogsInDifferentLevel(logger1Instance2);
       expect(callbackSpy.callCount).to.equal(10);
       expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Verbose: Logger1:Instance1 verbose log');
-      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
-      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
-      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
+      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
       expect(callbackSpy.getCall(4).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
       expect(callbackSpy.getCall(5).args.join(' ')).to.equal('Verbose: Logger1:Instance2 verbose log');
-      expect(callbackSpy.getCall(6).args.join(' ')).to.equal('Info: Logger1:Instance2 info log');
-      expect(callbackSpy.getCall(7).args.join(' ')).to.equal('Warn: Logger1:Instance2 warn log');
-      expect(callbackSpy.getCall(8).args.join(' ')).to.equal('Debug: Logger1:Instance2 debug log');
+      expect(callbackSpy.getCall(6).args.join(' ')).to.equal('Debug: Logger1:Instance2 debug log');
+      expect(callbackSpy.getCall(7).args.join(' ')).to.equal('Info: Logger1:Instance2 info log');
+      expect(callbackSpy.getCall(8).args.join(' ')).to.equal('Warn: Logger1:Instance2 warn log');
       expect(callbackSpy.getCall(9).args.join(' ')).to.equal('Error: Logger1:Instance2 error log');
     });
 
@@ -107,9 +107,9 @@ describe('Logger4nodeString', () => {
       printLogsInDifferentLevel(logger1Instance2);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to.equal('Verbose: Logger1:Instance1 verbose log');
-      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
-      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
-      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(1).args.join(' ')).to.equal('Debug: Logger1:Instance1 debug log');
+      expect(callbackSpy.getCall(2).args.join(' ')).to.equal('Info: Logger1:Instance1 info log');
+      expect(callbackSpy.getCall(3).args.join(' ')).to.equal('Warn: Logger1:Instance1 warn log');
       expect(callbackSpy.getCall(4).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
     });
 

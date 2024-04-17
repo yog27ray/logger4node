@@ -2,18 +2,20 @@ import util from 'util';
 
 export const enum LogSeverity {
   VERBOSE = 'verbose',
+  DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  DEBUG = 'debug',
   ERROR = 'error',
+  FATAL = 'fatal',
 }
 
 export const LogLevel: { [key in LogSeverity]: number } = {
   verbose: 1,
-  info: 2,
-  warn: 3,
-  debug: 4,
+  debug: 2,
+  info: 3,
+  warn: 4,
   error: 5,
+  fatal: 6,
 };
 
 export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
@@ -22,6 +24,7 @@ export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
   warn: 'Warn',
   debug: 'Debug',
   error: 'Error',
+  fatal: 'Fatal',
 };
 
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
@@ -58,6 +61,7 @@ const LOG_PATTERN: { [key in LogSeverity]: { negative: Array<string>; positive: 
   [LogSeverity.WARN]: { positive: [], negative: [] },
   [LogSeverity.DEBUG]: { positive: [], negative: [] },
   [LogSeverity.ERROR]: { positive: [], negative: [] },
+  [LogSeverity.FATAL]: { positive: [], negative: [] },
 };
 
 function isNotMatchWithPatterns(patterns: Array<string>, value: string): boolean {
@@ -81,8 +85,8 @@ export function setLogSeverityPattern(level: LogSeverity, pattern: string): void
 }
 
 declare interface Callback {
-  get stringLogging(): boolean;
-  get jsonLogging(): boolean;
+  stringLogging(): boolean;
+  jsonLogging(): boolean;
 }
 
 export class Logger {
@@ -125,6 +129,10 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
+  fatal(formatter: unknown, ...args: Array<unknown>): void {
+    this.log(LogSeverity.FATAL, formatter, ...args);
+  }
+
   constructor(loggerName: string, callbacks: Callback) {
     this.name = loggerName;
     this.callbacks = callbacks;
@@ -132,7 +140,7 @@ export class Logger {
 
   private transformArgs(...args: Array<unknown>): Array<unknown> {
     return args.map((each: unknown) => {
-      if (!this.callbacks.stringLogging) {
+      if (!this.callbacks.stringLogging()) {
         return each;
       }
       if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
@@ -165,7 +173,7 @@ export class Logger {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
-    if (this.callbacks.jsonLogging) {
+    if (this.callbacks.jsonLogging()) {
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
