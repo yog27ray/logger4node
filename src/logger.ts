@@ -80,19 +80,15 @@ export function setLogSeverityPattern(level: LogSeverity, pattern: string): void
   ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
 }
 
-let stringOnly: boolean = false;
-let jsonLogging: boolean = false;
+declare interface Callback {
+  get stringLogging(): boolean;
+  get jsonLogging(): boolean;
+}
 
 export class Logger {
   private readonly name: string;
 
-  static setOnlyStringLogging(vaue: boolean): void {
-    stringOnly = vaue;
-  }
-
-  static setJsonLogging(value: boolean): void {
-    jsonLogging = value;
-  }
+  private readonly callbacks: Callback;
 
   private static errorStack(...args: Array<unknown>): string {
     return args
@@ -107,21 +103,6 @@ export class Logger {
       }
       return JSON.stringify(each);
     }));
-  }
-
-  private static transformArgs(...args: Array<unknown>): Array<unknown> {
-    return args.map((each: unknown) => {
-      if (!stringOnly) {
-        return each;
-      }
-      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-        return each;
-      }
-      if (each instanceof Error) {
-        return each;
-      }
-      return JSON.stringify(each);
-    });
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
@@ -144,8 +125,24 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(loggerName: string, callbacks: Callback) {
+    this.name = loggerName;
+    this.callbacks = callbacks;
+  }
+
+  private transformArgs(...args: Array<unknown>): Array<unknown> {
+    return args.map((each: unknown) => {
+      if (!this.callbacks.stringLogging) {
+        return each;
+      }
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      if (each instanceof Error) {
+        return each;
+      }
+      return JSON.stringify(each);
+    });
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
@@ -168,7 +165,7 @@ export class Logger {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
-    if (jsonLogging) {
+    if (this.callbacks.jsonLogging) {
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
@@ -178,6 +175,6 @@ export class Logger {
     console.log(
       `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
-      util.format(formatter, ...Logger.transformArgs(...args)));
+      util.format(formatter, ...this.transformArgs(...args)));
   }
 }

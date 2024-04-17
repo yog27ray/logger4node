@@ -3,6 +3,10 @@ import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeveri
 export class Logger4Node {
   private readonly _applicationName: string;
 
+  private stringLogging: boolean = false;
+
+  private jsonLogging: boolean = false;
+
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
   }
@@ -15,12 +19,12 @@ export class Logger4Node {
     setLogSeverityPattern(level, pattern);
   }
 
-  static setOnlyStringLogging(stringOnly: boolean): void {
-    Logger.setOnlyStringLogging(stringOnly);
+  setStringLogging(stringOnly: boolean): void {
+    this.stringLogging = stringOnly;
   }
 
-  static setJsonLogging(jsonLogging: boolean): void {
-    Logger.setJsonLogging(jsonLogging);
+  setJsonLogging(jsonLogging: boolean): void {
+    this.jsonLogging = jsonLogging;
   }
 
   constructor(applicationName: string) {
@@ -28,7 +32,15 @@ export class Logger4Node {
   }
 
   instance(name: string): Logger {
-    return new Logger(`${this._applicationName}:${name}`);
+    const logger = this;
+    return new Logger(`${this._applicationName}:${name}`, {
+      get jsonLogging(): boolean {
+        return logger.jsonLogging;
+      },
+      get stringLogging(): boolean {
+        return logger.stringLogging;
+      },
+    });
   }
 }
 

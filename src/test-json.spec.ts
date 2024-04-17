@@ -163,7 +163,7 @@ describe('Logger4nodeJSON', () => {
       logger1Instance1 = logger1.instance('Instance1');
       logger2 = new Logger4Node('Logger2');
       logger2.setJsonLogging(true);
-      logger2.setOnlyStringLogging(true);
+      logger2.setStringLogging(true);
       logger2Instance1 = logger2.instance('Instance1');
     });
 
