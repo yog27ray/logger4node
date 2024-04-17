@@ -2,18 +2,20 @@ import util from 'util';
 
 export const enum LogSeverity {
   VERBOSE = 'verbose',
+  DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  DEBUG = 'debug',
   ERROR = 'error',
+  FATAL = 'fatal',
 }
 
 export const LogLevel: { [key in LogSeverity]: number } = {
   verbose: 1,
-  info: 2,
-  warn: 3,
-  debug: 4,
+  debug: 2,
+  info: 3,
+  warn: 4,
   error: 5,
+  fatal: 6,
 };
 
 export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
@@ -22,6 +24,7 @@ export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
   warn: 'Warn',
   debug: 'Debug',
   error: 'Error',
+  fatal: 'Fatal',
 };
 
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
@@ -58,6 +61,7 @@ const LOG_PATTERN: { [key in LogSeverity]: { negative: Array<string>; positive: 
   [LogSeverity.WARN]: { positive: [], negative: [] },
   [LogSeverity.DEBUG]: { positive: [], negative: [] },
   [LogSeverity.ERROR]: { positive: [], negative: [] },
+  [LogSeverity.FATAL]: { positive: [], negative: [] },
 };
 
 function isNotMatchWithPatterns(patterns: Array<string>, value: string): boolean {
@@ -80,12 +84,15 @@ export function setLogSeverityPattern(level: LogSeverity, pattern: string): void
   ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
 }
 
+declare interface Callback {
+  stringLogging(): boolean;
+  jsonLogging(): boolean;
+}
+
 export class Logger {
   private readonly name: string;
 
-  private readonly stringOnly: boolean = false;
-
-  private readonly jsonLogging: boolean = false;
+  private readonly callbacks: Callback;
 
   private static errorStack(...args: Array<unknown>): string {
     return args
@@ -93,8 +100,8 @@ export class Logger {
       .map((each: { stack?: string; }): string => each.stack).join('\n|\n');
   }
 
-  private static jsonTransformArgs(formatter: unknown, ...args: Array<unknown>): string {
-    return util.format(formatter, ...args.map((each: unknown) => {
+  private static jsonTransformArgs(...args: Array<unknown>): string {
+    return util.format(...args.map((each: unknown) => {
       if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
         return each;
       }
@@ -122,10 +129,28 @@ export class Logger {
     this.log(LogSeverity.ERROR, formatter, ...args);
   }
 
-  constructor(name: string, stringOnly: boolean, jsonLogging: boolean) {
-    this.name = name;
-    this.stringOnly = stringOnly;
-    this.jsonLogging = jsonLogging;
+  fatal(formatter: unknown, ...args: Array<unknown>): void {
+    this.log(LogSeverity.FATAL, formatter, ...args);
+  }
+
+  constructor(loggerName: string, callbacks: Callback) {
+    this.name = loggerName;
+    this.callbacks = callbacks;
+  }
+
+  private transformArgs(...args: Array<unknown>): Array<unknown> {
+    return args.map((each: unknown) => {
+      if (!this.callbacks.stringLogging()) {
+        return each;
+      }
+      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+        return each;
+      }
+      if (each instanceof Error) {
+        return each;
+      }
+      return JSON.stringify(each);
+    });
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
@@ -148,7 +173,7 @@ export class Logger {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
-    if (this.jsonLogging) {
+    if (this.callbacks.jsonLogging()) {
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
@@ -159,20 +184,5 @@ export class Logger {
       `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
       util.format(formatter, ...this.transformArgs(...args)));
-  }
-
-  private transformArgs(...args: Array<unknown>): Array<unknown> {
-    return args.map((each: unknown) => {
-      if (!this.stringOnly) {
-        return each;
-      }
-      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-        return each;
-      }
-      if (each instanceof Error) {
-        return each;
-      }
-      return JSON.stringify(each);
-    });
   }
 }
