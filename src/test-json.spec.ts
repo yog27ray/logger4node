@@ -15,7 +15,6 @@ function printLogsInDifferentType(logger: Logger): void {
   logger.error('this is ', 1, true, { key1: 1, value: 2 });
 }
 
-
 function printFatalLogsInDifferentType(logger: Logger): void {
   logger.fatal('this is ', 1, true, { key1: 1, value: 2 });
 }
