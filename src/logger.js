@@ -7,10 +7,11 @@ exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports
 const util_1 = __importDefault(require("util"));
 exports.LogLevel = {
     verbose: 1,
-    info: 2,
-    warn: 3,
-    debug: 4,
+    debug: 2,
+    info: 3,
+    warn: 4,
     error: 5,
+    fatal: 6,
 };
 exports.DisplaySeverityMap = {
     verbose: 'Verbose',
@@ -18,6 +19,7 @@ exports.DisplaySeverityMap = {
     warn: 'Warn',
     debug: 'Debug',
     error: 'Error',
+    fatal: 'Fatal',
 };
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
@@ -51,6 +53,7 @@ const LOG_PATTERN = {
     ["warn" /* LogSeverity.WARN */]: { positive: [], negative: [] },
     ["debug" /* LogSeverity.DEBUG */]: { positive: [], negative: [] },
     ["error" /* LogSeverity.ERROR */]: { positive: [], negative: [] },
+    ["fatal" /* LogSeverity.FATAL */]: { positive: [], negative: [] },
 };
 function isNotMatchWithPatterns(patterns, value) {
     return patterns.every((pattern) => !new RegExp(`^${pattern}$`).test(value));
@@ -70,15 +73,7 @@ function setLogSeverityPattern(level, pattern) {
     ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
 }
 exports.setLogSeverityPattern = setLogSeverityPattern;
-let stringOnly = false;
-let jsonLogging = false;
 class Logger {
-    static setOnlyStringLogging(vaue) {
-        stringOnly = vaue;
-    }
-    static setJsonLogging(value) {
-        jsonLogging = value;
-    }
     static errorStack(...args) {
         return args
             .filter((each) => (each instanceof Error))
@@ -91,20 +86,6 @@ class Logger {
             }
             return JSON.stringify(each);
         }));
-    }
-    static transformArgs(...args) {
-        return args.map((each) => {
-            if (!stringOnly) {
-                return each;
-            }
-            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-                return each;
-            }
-            if (each instanceof Error) {
-                return each;
-            }
-            return JSON.stringify(each);
-        });
     }
     verbose(formatter, ...args) {
         this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
@@ -121,8 +102,26 @@ class Logger {
     error(formatter, ...args) {
         this.log("error" /* LogSeverity.ERROR */, formatter, ...args);
     }
-    constructor(name) {
-        this.name = name;
+    fatal(formatter, ...args) {
+        this.log("fatal" /* LogSeverity.FATAL */, formatter, ...args);
+    }
+    constructor(loggerName, callbacks) {
+        this.name = loggerName;
+        this.callbacks = callbacks;
+    }
+    transformArgs(...args) {
+        return args.map((each) => {
+            if (!this.callbacks.stringLogging()) {
+                return each;
+            }
+            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
+                return each;
+            }
+            if (each instanceof Error) {
+                return each;
+            }
+            return JSON.stringify(each);
+        });
     }
     isLogEnabled(logSeverity) {
         if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
@@ -143,11 +142,11 @@ class Logger {
         if (!this.isLogEnabled(logSeverity)) {
             return;
         }
-        if (jsonLogging) {
+        if (this.callbacks.jsonLogging()) {
             console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`);
             return;
         }
-        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...Logger.transformArgs(...args)));
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
     }
 }
 exports.Logger = Logger;

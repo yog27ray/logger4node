@@ -12,17 +12,22 @@ class Logger4Node {
     static setLogSeverityPattern(level, pattern) {
         (0, logger_1.setLogSeverityPattern)(level, pattern);
     }
-    static setOnlyStringLogging(stringOnly) {
-        logger_1.Logger.setOnlyStringLogging(stringOnly);
+    setStringLogging(stringOnly) {
+        this.stringLogging = stringOnly;
     }
-    static setJsonLogging(jsonLogging) {
-        logger_1.Logger.setJsonLogging(jsonLogging);
+    setJsonLogging(jsonLogging) {
+        this.jsonLogging = jsonLogging;
     }
     constructor(applicationName) {
+        this.stringLogging = false;
+        this.jsonLogging = false;
         this._applicationName = applicationName;
     }
     instance(name) {
-        return new logger_1.Logger(`${this._applicationName}:${name}`);
+        return new logger_1.Logger(`${this._applicationName}:${name}`, {
+            jsonLogging: () => this.jsonLogging,
+            stringLogging: () => this.stringLogging,
+        });
     }
 }
 exports.Logger4Node = Logger4Node;

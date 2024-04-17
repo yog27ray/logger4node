@@ -9,13 +9,16 @@ const logger_1 = require("./logger");
 const logger4_node_1 = require("./logger4-node");
 function printLogsInDifferentLevel(logger) {
     logger.verbose('verbose log');
+    logger.debug('debug log');
     logger.info('info log');
     logger.warn('warn log');
-    logger.debug('debug log');
     logger.error('error log');
 }
 function printLogsInDifferentType(logger) {
     logger.error('this is ', 1, true, { key1: 1, value: 2 });
+}
+function printFatalLogsInDifferentType(logger) {
+    logger.fatal('this is ', 1, true, { key1: 1, value: 2 });
 }
 describe('Logger4nodeJSON', () => {
     context('logging in different level', () => {
@@ -46,11 +49,11 @@ describe('Logger4nodeJSON', () => {
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"verbose","message":"verbose log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(4).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
         });
@@ -65,36 +68,36 @@ describe('Logger4nodeJSON', () => {
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
                 .equal('{"className":"Logger2:Instance1","level":"verbose","message":"verbose log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
-                .equal('{"className":"Logger2:Instance1","level":"info","message":"info log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
-                .equal('{"className":"Logger2:Instance1","level":"warn","message":"warn log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
                 .equal('{"className":"Logger2:Instance1","level":"debug","message":"debug log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
+                .equal('{"className":"Logger2:Instance1","level":"info","message":"info log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
+                .equal('{"className":"Logger2:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(4).args.join(' ')).to
                 .equal('{"className":"Logger2:Instance1","level":"error","message":"error log","stack":""}');
         });
         it('should print only Logger1 Debug  and above logs', () => {
-            logger4_node_1.Logger4Node.setLogLevel("debug" /* LogSeverity.DEBUG */);
+            logger4_node_1.Logger4Node.setLogLevel("warn" /* LogSeverity.WARN */);
             printLogsInDifferentLevel(logger1Instance1);
             printLogsInDifferentLevel(logger2Instance1);
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(2);
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
+                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
         });
         it('should print only Logger1 Debug  and above logs and logger2 only Debug: ', () => {
-            logger4_node_1.Logger4Node.setLogLevel("debug" /* LogSeverity.DEBUG */);
-            logger4_node_1.Logger4Node.setLogSeverityPattern("debug" /* LogSeverity.DEBUG */, 'Logger2:*');
+            logger4_node_1.Logger4Node.setLogLevel("warn" /* LogSeverity.WARN */);
+            logger4_node_1.Logger4Node.setLogSeverityPattern("warn" /* LogSeverity.WARN */, 'Logger2:*');
             printLogsInDifferentLevel(logger1Instance1);
             printLogsInDifferentLevel(logger2Instance1);
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(3);
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
+                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
-                .equal('{"className":"Logger2:Instance1","level":"debug","message":"debug log","stack":""}');
+                .equal('{"className":"Logger2:Instance1","level":"warn","message":"warn log","stack":""}');
         });
         it('should print both instance of Logger1', () => {
             printLogsInDifferentLevel(logger1Instance1);
@@ -103,21 +106,21 @@ describe('Logger4nodeJSON', () => {
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"verbose","message":"verbose log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
+                .equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
+                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' '))
-                .to.equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
+                .to.equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(4).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(5).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance2","level":"verbose","message":"verbose log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(6).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance2","level":"info","message":"info log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(7).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance2","level":"warn","message":"warn log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(8).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance2","level":"debug","message":"debug log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(7).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance2","level":"info","message":"info log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(8).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance2","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(9).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance2","level":"error","message":"error log","stack":""}');
         });
@@ -129,11 +132,11 @@ describe('Logger4nodeJSON', () => {
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"verbose","message":"verbose log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
-                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
-            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"debug","message":"debug log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(2).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance1","level":"info","message":"info log","stack":""}');
+            (0, chai_1.expect)(callbackSpy.getCall(3).args.join(' ')).to
+                .equal('{"className":"Logger1:Instance1","level":"warn","message":"warn log","stack":""}');
             (0, chai_1.expect)(callbackSpy.getCall(4).args.join(' ')).to
                 .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
         });
@@ -153,7 +156,7 @@ describe('Logger4nodeJSON', () => {
             logger1Instance1 = logger1.instance('Instance1');
             logger2 = new logger4_node_1.Logger4Node('Logger2');
             logger2.setJsonLogging(true);
-            logger2.setOnlyStringLogging(true);
+            logger2.setStringLogging(true);
             logger2Instance1 = logger2.instance('Instance1');
         });
         beforeEach(() => {
@@ -173,6 +176,12 @@ describe('Logger4nodeJSON', () => {
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(1);
             (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
                 .equal('{"className":"Logger2:Instance1","level":"error","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
+        });
+        it('should print logs only in string for fatal', () => {
+            printFatalLogsInDifferentType(logger2Instance1);
+            (0, chai_1.expect)(callbackSpy.callCount).to.equal(1);
+            (0, chai_1.expect)(callbackSpy.getCall(0).args.join(' ')).to
+                .equal('{"className":"Logger2:Instance1","level":"fatal","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
         });
         afterEach(() => {
             callbackSpy.restore();
