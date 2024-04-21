@@ -85,7 +85,7 @@ class Logger {
                 return each;
             }
             return JSON.stringify(each);
-        }));
+        })).replace(/"/g, '\\"');
     }
     verbose(formatter, ...args) {
         this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
