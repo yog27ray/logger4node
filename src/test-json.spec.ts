@@ -182,21 +182,56 @@ describe('Logger4nodeJSON', () => {
       printLogsInDifferentType(logger1Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"className":"Logger1:Instance1","level":"error","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
+        .equal('{"className":"Logger1:Instance1","level":"error","message":"this is  1 true {\\"key1\\":1,\\"value\\":2}","stack":""}');
     });
 
     it('should print logs only in string', () => {
       printLogsInDifferentType(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"className":"Logger2:Instance1","level":"error","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
+        .equal('{"className":"Logger2:Instance1","level":"error","message":"this is  1 true {\\"key1\\":1,\\"value\\":2}","stack":""}');
     });
 
     it('should print logs only in string for fatal', () => {
       printFatalLogsInDifferentType(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"className":"Logger2:Instance1","level":"fatal","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
+        .equal('{"className":"Logger2:Instance1","level":"fatal","message":"this is  1 true {\\"key1\\":1,\\"value\\":2}","stack":""}');
+    });
+
+    afterEach(() => {
+      callbackSpy.restore();
+    });
+  });
+
+  context('logging string, object, array in one log', () => {
+    let callbackSpy: SinonSpy;
+    let loggerInstance: Logger;
+
+    before(() => {
+      const logger = new Logger4Node('Logger');
+      loggerInstance = logger.instance('Instance');
+      logger.setJsonLogging(true);
+    });
+
+    beforeEach(() => {
+      Logger4Node.setLogPattern('Logger:*');
+      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      callbackSpy = sinon.spy(console, 'log');
+    });
+
+    it('should log object with string in proper json format', () => {
+      loggerInstance.error('this is string', { var: 1, var2: 2 });
+      expect(callbackSpy.callCount).to.equal(1);
+      expect(callbackSpy.getCall(0).args[0]).to
+        .equal('{"className":"Logger:Instance","level":"error","message":"this is string {\\"var\\":1,\\"var2\\":2}","stack":""}');
+      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
+        className: 'Logger:Instance',
+        level: 'error',
+        message: 'this is string {"var":1,"var2":2}',
+        stack: '',
+      });
     });
 
     afterEach(() => {
