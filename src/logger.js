@@ -85,7 +85,7 @@ class Logger {
                 return each;
             }
             return JSON.stringify(each);
-        })).replace(/"/g, '\\"')
+        })).replace(/([^\\])"/g, '$1\\"')
             .replace(/\n/g, '\\n');
     }
     verbose(formatter, ...args) {
