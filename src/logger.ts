@@ -106,7 +106,8 @@ export class Logger {
         return each;
       }
       return JSON.stringify(each);
-    }));
+    })).replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n');
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
