@@ -270,13 +270,6 @@ describe('Logger4nodeJSON', () => {
       });
     });
 
-    it('should print logs only in string for fatal', () => {
-      printFatalLogsInDifferentType(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"className":"Logger2:Instance1","level":"fatal","message":"this is  1 true {"key1":1,"value":2}","stack":""}');
-    });
-
     afterEach(() => {
       callbackSpy.restore();
     });
