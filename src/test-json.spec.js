@@ -217,5 +217,36 @@ describe('Logger4nodeJSON', () => {
             callbackSpy.restore();
         });
     });
+    context('logging multi line string', () => {
+        let callbackSpy;
+        let loggerInstance;
+        before(() => {
+            const logger = new logger4_node_1.Logger4Node('Logger');
+            loggerInstance = logger.instance('Instance');
+            logger.setJsonLogging(true);
+        });
+        beforeEach(() => {
+            logger4_node_1.Logger4Node.setLogPattern('Logger:*');
+            logger4_node_1.Logger4Node.setLogLevel("verbose" /* LogSeverity.VERBOSE */);
+            Object.keys(logger_1.LogLevel).forEach((logSeverity) => logger4_node_1.Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+            callbackSpy = sinon_1.default.spy(console, 'log');
+        });
+        it('should log multi line string in one line', () => {
+            loggerInstance.error('this is line1\nline2\nline2', { var: 1, var2: 2 });
+            (0, chai_1.expect)(callbackSpy.callCount).to.equal(1);
+            (0, chai_1.expect)(callbackSpy.getCall(0).args[0]).to
+                .equal('{"className":"Logger:Instance","level":"error","message":"this is line1\\nline2\\nline2'
+                + ' {\\"var\\":1,\\"var2\\":2}","stack":""}');
+            (0, chai_1.expect)(JSON.parse(callbackSpy.getCall(0).args[0])).to.deep.equal({
+                className: 'Logger:Instance',
+                level: 'error',
+                message: 'this is line1\nline2\nline2 {"var":1,"var2":2}',
+                stack: '',
+            });
+        });
+        afterEach(() => {
+            callbackSpy.restore();
+        });
+    });
 });
 //# sourceMappingURL=test-json.spec.js.map
