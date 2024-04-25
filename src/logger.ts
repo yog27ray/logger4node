@@ -1,4 +1,5 @@
 import util from 'util';
+import * as fs from "node:fs";
 
 export const enum LogSeverity {
   VERBOSE = 'verbose',
@@ -95,19 +96,19 @@ export class Logger {
   private readonly callbacks: Callback;
 
   private static errorStack(...args: Array<unknown>): string {
-    return args
+    return this.handleJSONSpecialCharacter(args
       .filter((each): boolean => (each instanceof Error))
-      .map((each: { stack?: string; }): string => each.stack).join('\n|\n');
+      .map((each: { stack?: string; }): string => each.stack).join('\\n|\\n'));
   }
 
   private static jsonTransformArgs(...args: Array<unknown>): string {
-    return util.format(...args.map((each: unknown) => {
+    const message = util.format(...args.map((each: unknown) => {
       if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
         return each;
       }
       return JSON.stringify(each);
-    })).replace(/([^\\])"/g, '$1\\"')
-      .replace(/\n/g, '\\n');
+    }));
+    return this.handleJSONSpecialCharacter(message);
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
@@ -179,11 +180,24 @@ export class Logger {
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
       }","stack":"${Logger.errorStack(formatter, ...args)}"}`);
+      fs.writeFileSync('./test.txt', `{"className":"${this.name
+      }","level":"${logSeverity
+      }","message":"${Logger.jsonTransformArgs(formatter, ...args)
+      }","stack":"${Logger.errorStack(formatter, ...args)}"}`, 'utf-8');
       return;
     }
     console.log(
       `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
       util.format(formatter, ...this.transformArgs(...args)));
+  }
+
+  private static handleJSONSpecialCharacter(message: string): string {
+    return message
+        .replace(/\\/g, '\\\\')
+        // .replace(/([^\\])"/g, '$1\\"')
+        .replace(/"/g, '\\"')
+        .replace(/\r\n/g, '\\r\\n')
+        .replace(/\n/g, '\\n');
   }
 }
