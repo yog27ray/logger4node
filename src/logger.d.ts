@@ -34,5 +34,6 @@ export declare class Logger {
     private transformArgs;
     private isLogEnabled;
     private log;
+    private static handleJSONSpecialCharacter;
 }
 export {};

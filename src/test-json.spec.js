@@ -230,13 +230,28 @@ describe('Logger4nodeJSON', () => {
             loggerInstance.error('this is line1 \\"', { var: 1, var2: 2 });
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(1);
             (0, chai_1.expect)(callbackSpy.getCall(0).args[0]).to
-                .equal('{"className":"Logger:Instance","level":"error","message":"this is line1 \\" {\\"var\\":1,\\"var2\\":2}","stack":""}');
+                .equal('{"className":"Logger:Instance","level":"error","message":"this is line1 \\\\\\" {\\"var\\":1,\\"var2\\":2}","stack":""}');
             (0, chai_1.expect)(JSON.parse(callbackSpy.getCall(0).args[0])).to.deep.equal({
                 className: 'Logger:Instance',
                 level: 'error',
-                message: 'this is line1 " {"var":1,"var2":2}',
+                message: 'this is line1 \\" {"var":1,"var2":2}',
                 stack: '',
             });
+        });
+        it('should log properly when message contains string as well as json"', () => {
+            try {
+                throw new class TestError extends Error {
+                    constructor() {
+                        super();
+                        this.message = 'Received an error with invalid JSON from Parse: <html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>';
+                    }
+                }();
+            }
+            catch (error) {
+                loggerInstance.error(error);
+            }
+            (0, chai_1.expect)(callbackSpy.callCount).to.equal(1);
+            (0, chai_1.expect)(typeof JSON.parse(callbackSpy.getCall(0).args[0])).to.equal('object');
         });
         afterEach(() => {
             callbackSpy.restore();

@@ -1,10 +1,34 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = void 0;
 const util_1 = __importDefault(require("util"));
+const fs = __importStar(require("node:fs"));
 exports.LogLevel = {
     verbose: 1,
     debug: 2,
@@ -75,18 +99,18 @@ function setLogSeverityPattern(level, pattern) {
 exports.setLogSeverityPattern = setLogSeverityPattern;
 class Logger {
     static errorStack(...args) {
-        return args
+        return this.handleJSONSpecialCharacter(args
             .filter((each) => (each instanceof Error))
-            .map((each) => each.stack).join('\n|\n');
+            .map((each) => each.stack).join('\\n|\\n'));
     }
     static jsonTransformArgs(...args) {
-        return util_1.default.format(...args.map((each) => {
+        const message = util_1.default.format(...args.map((each) => {
             if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
                 return each;
             }
             return JSON.stringify(each);
-        })).replace(/([^\\])"/g, '$1\\"')
-            .replace(/\n/g, '\\n');
+        }));
+        return this.handleJSONSpecialCharacter(message);
     }
     verbose(formatter, ...args) {
         this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
@@ -145,9 +169,18 @@ class Logger {
         }
         if (this.callbacks.jsonLogging()) {
             console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`);
+            fs.writeFileSync('./test.txt', `{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`, 'utf-8');
             return;
         }
         console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
+    }
+    static handleJSONSpecialCharacter(message) {
+        return message
+            .replace(/\\/g, '\\\\')
+            // .replace(/([^\\])"/g, '$1\\"')
+            .replace(/"/g, '\\"')
+            .replace(/\r\n/g, '\\r\\n')
+            .replace(/\n/g, '\\n');
     }
 }
 exports.Logger = Logger;
