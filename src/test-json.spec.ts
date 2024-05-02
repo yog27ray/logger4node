@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import sinon, { SinonSpy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from './logger';
 import { Logger4Node } from './logger4-node';
+import { IncomingMessage, ServerResponse } from 'http';
 
 function printLogsInDifferentLevel(logger: Logger): void {
   logger.verbose('verbose log');
@@ -149,6 +150,61 @@ describe('Logger4nodeJSON', () => {
         .equal('{"className":"Logger1:Instance1","level":"error","message":"error log","stack":""}');
     });
 
+    it('should print session information', () => {
+      Logger4Node.setLogPattern('Logger1:*,-Logger1:Instance2*');
+      Logger4Node.Trace.requestHandler(() => ({ key1: 'value1', key2: 'value2' }))({} as IncomingMessage, {} as ServerResponse, () => {
+        printLogsInDifferentLevel(logger1Instance1);
+        logger1Instance1.log(LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
+      });
+      expect(callbackSpy.callCount).to.equal(6);
+      const calls = new Array(6)
+          .fill(0)
+          .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
+          .map((each) => JSON.parse(each));
+      calls.forEach((each) => {
+        expect(each.session.sessionId).to.exist;
+        delete each.session.sessionId;
+      });
+      expect(calls).to.deep.equal([{
+        className: 'Logger1:Instance1',
+        level: 'verbose',
+        message: 'verbose log',
+        stack: '',
+        session: {key1: 'value1', key2: 'value2' },
+      }, {
+        className: 'Logger1:Instance1',
+        level: 'debug',
+        message: 'debug log',
+        stack: '',
+        session: { key1: 'value1', key2: 'value2' },
+      }, {
+        className: 'Logger1:Instance1',
+        level: 'info',
+        message: 'info log',
+        stack: '',
+        session: { key1: 'value1', key2: 'value2' },
+      }, {
+        className: 'Logger1:Instance1',
+        level: 'warn',
+        message: 'warn log',
+        stack: '',
+        session: { key1: 'value1', key2: 'value2' }
+      }, {
+        className: 'Logger1:Instance1',
+        level: 'error',
+        message: 'error log',
+        stack: '',
+        session: { key1: 'value1', key2: 'value2' }
+      }, {
+        className: 'Logger1:Instance1',
+        level: 'error',
+        message: 'verbose log',
+        stack: '',
+        session: { key1: 'value1', key2: 'value2' },
+        extraData: { extraField: 'extraValue' },
+      }]);
+    });
+
     afterEach(() => {
       callbackSpy.restore();
     });
@@ -257,6 +313,19 @@ describe('Logger4nodeJSON', () => {
         className: 'Logger:Instance',
         level: 'error',
         message: 'this is line1 \\" {"var":1,"var2":2}',
+        stack: '',
+      });
+    });
+
+    it('should log properly when message contains \t', () => {
+      loggerInstance.error('this is line1 \t');
+      expect(callbackSpy.callCount).to.equal(1);
+      expect(callbackSpy.getCall(0).args[0]).to
+        .equal('{"className":"Logger:Instance","level":"error","message":"this is line1 \\t","stack":""}');
+      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
+        className: 'Logger:Instance',
+        level: 'error',
+        message: 'this is line1 \t',
         stack: '',
       });
     });

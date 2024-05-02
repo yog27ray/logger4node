@@ -1,5 +1,6 @@
 import util from 'util';
 import * as fs from "node:fs";
+import {Trace} from "./trace";
 
 export const enum LogSeverity {
   VERBOSE = 'verbose',
@@ -112,27 +113,27 @@ export class Logger {
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.VERBOSE, formatter, ...args);
+    this.log(LogSeverity.VERBOSE, {}, formatter, ...args);
   }
 
   info(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.INFO, formatter, ...args);
+    this.log(LogSeverity.INFO, {}, formatter, ...args);
   }
 
   warn(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.WARN, formatter, ...args);
+    this.log(LogSeverity.WARN, {}, formatter, ...args);
   }
 
   debug(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.DEBUG, formatter, ...args);
+    this.log(LogSeverity.DEBUG, {}, formatter, ...args);
   }
 
   error(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.ERROR, formatter, ...args);
+    this.log(LogSeverity.ERROR, {}, formatter, ...args);
   }
 
   fatal(formatter: unknown, ...args: Array<unknown>): void {
-    this.log(LogSeverity.FATAL, formatter, ...args);
+    this.log(LogSeverity.FATAL, {}, formatter, ...args);
   }
 
   constructor(loggerName: string, callbacks: Callback) {
@@ -171,19 +172,23 @@ export class Logger {
     return isMatchWithPatterns(positive, this.name);
   }
 
-  private log(logSeverity: LogSeverity, formatter: unknown, ...args: Array<unknown>): void {
+  log(
+      logSeverity: LogSeverity,
+      extraData: Record<string, unknown>,
+      formatter: unknown,
+      ...args: Array<unknown>): void {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
     if (this.callbacks.jsonLogging()) {
+      const sessionInfoString = this.stringifyJSON(Trace.getSessionInfo());
+      const extraDataString = this.stringifyJSON(extraData);
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
-      }","stack":"${Logger.errorStack(formatter, ...args)}"}`);
-      fs.writeFileSync('./test.txt', `{"className":"${this.name
-      }","level":"${logSeverity
-      }","message":"${Logger.jsonTransformArgs(formatter, ...args)
-      }","stack":"${Logger.errorStack(formatter, ...args)}"}`, 'utf-8');
+      }","stack":"${Logger.errorStack(formatter, ...args)}"${
+        sessionInfoString ? `, "session": ${sessionInfoString}`: ""}${
+        extraDataString ? `, "extraData": ${extraDataString}`: ""}}`);
       return;
     }
     console.log(
@@ -195,9 +200,17 @@ export class Logger {
   private static handleJSONSpecialCharacter(message: string): string {
     return message
         .replace(/\\/g, '\\\\')
-        // .replace(/([^\\])"/g, '$1\\"')
+        .replace(/\t/g, '\\t')
         .replace(/"/g, '\\"')
         .replace(/\r\n/g, '\\r\\n')
         .replace(/\n/g, '\\n');
+  }
+
+  private stringifyJSON(json: Record<string, unknown> = {}): string {
+    const jsonString = JSON.stringify(json);
+    if (jsonString === "{}") {
+      return "";
+    }
+    return jsonString;
   }
 }

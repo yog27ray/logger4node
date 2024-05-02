@@ -1,4 +1,5 @@
 import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeverityPattern } from './logger';
+import {Trace} from "./trace";
 
 export class Logger4Node {
   private readonly _applicationName: string;
@@ -6,6 +7,8 @@ export class Logger4Node {
   private stringLogging: boolean = false;
 
   private jsonLogging: boolean = false;
+
+  static Trace = Trace;
 
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
