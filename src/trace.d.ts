@@ -5,7 +5,7 @@ declare interface SessionInfo {
     [key: string]: string;
 }
 export declare class Trace {
-    static requestHandler(callback?: () => Omit<SessionInfo, 'sessionId'>): (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
+    static requestHandler(callback?: (req: http.IncomingMessage) => Omit<SessionInfo, 'sessionId'>): (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void;
     static getSessionInfo(): SessionInfo;
 }
 export {};

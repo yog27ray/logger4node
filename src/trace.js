@@ -7,7 +7,7 @@ const asyncLocalStorage = new async_hooks_1.AsyncLocalStorage();
 class Trace {
     static requestHandler(callback) {
         return (req, res, next) => {
-            asyncLocalStorage.run({ ...callback(), sessionId: (0, uuid_1.v4)() }, () => next());
+            asyncLocalStorage.run({ ...callback(req), sessionId: (0, uuid_1.v4)() }, () => next());
         };
     }
     static getSessionInfo() {
