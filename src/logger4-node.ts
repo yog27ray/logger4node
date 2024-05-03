@@ -1,5 +1,5 @@
 import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeverityPattern } from './logger';
-import {Trace} from "./trace";
+import { Trace } from './trace';
 
 export class Logger4Node {
   private readonly _applicationName: string;

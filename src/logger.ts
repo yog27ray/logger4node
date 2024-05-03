@@ -1,5 +1,5 @@
 import util from 'util';
-import {Trace} from "./trace";
+import { Trace } from './trace';
 
 export const enum LogSeverity {
   VERBOSE = 'verbose',
@@ -173,24 +173,24 @@ export class Logger {
   }
 
   log(
-      logSeverity: LogSeverity,
-      extraData: Record<string, unknown>,
-      formatter: unknown,
-      ...args: Array<unknown>): void {
+    logSeverity: LogSeverity,
+    extraData: Record<string, unknown>,
+    formatter: unknown,
+    ...args: Array<unknown>): void {
     if (!this.isLogEnabled(logSeverity)) {
       return;
     }
     if (this.callbacks.jsonLogging()) {
-      const source = this.generateLogSource();
-      const sessionInfoString = this.stringifyJSON(Trace.getSessionInfo());
-      const extraDataString = this.stringifyJSON(extraData);
+      const source = Logger.generateLogSource();
+      const sessionInfoString = Logger.stringifyJSON(Trace.getSessionInfo());
+      const extraDataString = Logger.stringifyJSON(extraData);
       console.log(`{"className":"${this.name
       }","level":"${logSeverity
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
       }","stack":"${Logger.errorStack(formatter, ...args)}"${
-        sessionInfoString ? `, "session": ${sessionInfoString}`: ""}${
-        extraDataString ? `, "extraData": ${extraDataString}`: ""}${
-        source ? `, "source": ${source}`: ""}}`);
+        sessionInfoString ? `, "session": ${sessionInfoString}` : ''}${
+        extraDataString ? `, "extraData": ${extraDataString}` : ''}${
+        source ? `, "source": ${source}` : ''}}`);
       return;
     }
     console.log(
@@ -201,27 +201,27 @@ export class Logger {
 
   private static handleJSONSpecialCharacter(message: string): string {
     return message
-        .replace(/\\/g, '\\\\')
-        .replace(/\t/g, '\\t')
-        .replace(/"/g, '\\"')
-        .replace(/\r\n/g, '\\r\\n')
-        .replace(/\n/g, '\\n');
+      .replace(/\\/g, '\\\\')
+      .replace(/\t/g, '\\t')
+      .replace(/"/g, '\\"')
+      .replace(/\r\n/g, '\\r\\n')
+      .replace(/\n/g, '\\n');
   }
 
-  private stringifyJSON(json: Record<string, unknown> = {}): string {
+  private static stringifyJSON(json: Record<string, unknown> = {}): string {
     const jsonString = JSON.stringify(json);
-    if (jsonString === "{}") {
-      return "";
+    if (jsonString === '{}') {
+      return '';
     }
     return jsonString;
   }
 
-  private generateLogSource(): string {
-    const stack = new Error().stack;
+  private static generateLogSource(): string {
+    const { stack } = new Error();
     const logSource = stack.split('\n').find((line) => !line.includes(currentFolder)
         && line.trim().startsWith('at '));
     if (!logSource) {
-      return "";
+      return '';
     }
     if (logSource[logSource.length - 1] === ')') {
       const [caller, filePath] = logSource.split(' (');
