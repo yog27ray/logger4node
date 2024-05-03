@@ -28,7 +28,12 @@ export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
   fatal: 'Fatal',
 };
 
-const currentFolder = __dirname;
+const ignoreFolders = [
+    `${process.cwd()}/src/logger.ts`,
+    `${process.cwd()}/src/logger4-node.ts`,
+    `${process.cwd()}/logger4node/src/logger.ts`,
+    `${process.cwd()}/logger4node/src/logger4-node.ts`,
+];
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
   const positive: Array<string> = [];
   const negative: Array<string> = [];
@@ -132,7 +137,7 @@ export class Logger {
   private static generateLogSource(): string {
     const { stack } = new Error();
     const logSource = stack.split('\n')
-      .find((line): boolean => !line.includes(currentFolder)
+      .find((line): boolean => !ignoreFolders.some((folder) => line.includes(folder))
         && line.trim().startsWith('at '));
     if (!logSource) {
       return '';
