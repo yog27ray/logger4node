@@ -131,7 +131,8 @@ export class Logger {
 
   private static generateLogSource(): string {
     const { stack } = new Error();
-    const logSource = stack.split('\n').find(line => !line.includes(currentFolder)
+    const logSource = stack.split('\n')
+      .find((line): boolean => !line.includes(currentFolder)
         && line.trim().startsWith('at '));
     if (!logSource) {
       return '';
