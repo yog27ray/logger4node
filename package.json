@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha './src/**/*.spec.ts'",
-    "coverage": "nyc mocha './src/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
+    "test": "NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
+    "coverage": "nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/yog27ray/logger4node#readme",
   "dependencies": {
-    "util": "^0.12.5"
+    "async_hooks": "1.0.0",
+    "util": "0.12.5",
+    "uuid": "9.0.1"
   },
   "devDependencies": {
     "@types/chai": "4.3.14",
