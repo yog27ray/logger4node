@@ -1,5 +1,4 @@
 import util from 'util';
-import * as fs from "node:fs";
 import {Trace} from "./trace";
 
 export const enum LogSeverity {
@@ -29,6 +28,7 @@ export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
   fatal: 'Fatal',
 };
 
+const currentFolder = __dirname;
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
   const positive: Array<string> = [];
   const negative: Array<string> = [];
@@ -181,6 +181,7 @@ export class Logger {
       return;
     }
     if (this.callbacks.jsonLogging()) {
+      const source = this.generateLogSource();
       const sessionInfoString = this.stringifyJSON(Trace.getSessionInfo());
       const extraDataString = this.stringifyJSON(extraData);
       console.log(`{"className":"${this.name
@@ -188,7 +189,8 @@ export class Logger {
       }","message":"${Logger.jsonTransformArgs(formatter, ...args)
       }","stack":"${Logger.errorStack(formatter, ...args)}"${
         sessionInfoString ? `, "session": ${sessionInfoString}`: ""}${
-        extraDataString ? `, "extraData": ${extraDataString}`: ""}}`);
+        extraDataString ? `, "extraData": ${extraDataString}`: ""}${
+        source ? `, "source": ${source}`: ""}}`);
       return;
     }
     console.log(
@@ -212,5 +214,34 @@ export class Logger {
       return "";
     }
     return jsonString;
+  }
+
+  private generateLogSource(): string {
+    const stack = new Error().stack;
+    const logSource = stack.split('\n').find((line) => !line.includes(currentFolder)
+        && line.trim().startsWith('at '));
+    if (!logSource) {
+      return "";
+    }
+    if (logSource[logSource.length - 1] === ')') {
+      const [caller, filePath] = logSource.split(' (');
+      const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
+      const [fileName, line, column] = filePathSplit.pop().split(':');
+      return JSON.stringify({
+        caller: caller.split('at ')[1],
+        fileName,
+        path: filePathSplit.join('/'),
+        line,
+        column,
+      });
+    }
+    const filePathSplit = logSource.split('at ')[1].split('/');
+    const [fileName, line, column] = filePathSplit.pop().split(':');
+    return JSON.stringify({
+      fileName,
+      path: filePathSplit.join('/'),
+      line,
+      column,
+    });
   }
 }
