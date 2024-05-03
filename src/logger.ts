@@ -139,8 +139,14 @@ export class Logger {
     }
     if (logSource[logSource.length - 1] === ')') {
       const [caller, filePath] = logSource.split(' (');
+      if (!filePath) {
+        return '';
+      }
       const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
       const [fileName, line, column] = filePathSplit.pop().split(':');
+      if (!fileName || !line || !column) {
+        return '';
+      }
       return JSON.stringify({
         caller: caller.split('at ')[1],
         fileName,
@@ -151,6 +157,9 @@ export class Logger {
     }
     const filePathSplit = logSource.split('at ')[1].split('/');
     const [fileName, line, column] = filePathSplit.pop().split(':');
+    if (!fileName || !line || !column) {
+      return '';
+    }
     return JSON.stringify({
       fileName,
       path: filePathSplit.join('/'),
