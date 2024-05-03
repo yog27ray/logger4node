@@ -10,10 +10,10 @@ declare interface SessionInfo {
 const asyncLocalStorage = new AsyncLocalStorage<SessionInfo>();
 
 export class Trace {
-  static requestHandler(callback?: () => Omit<SessionInfo, 'sessionId'>)
+  static requestHandler(callback?: (req: http.IncomingMessage) => Omit<SessionInfo, 'sessionId'>)
       : (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => void {
     return (req: http.IncomingMessage, res: http.ServerResponse, next: (error?: any) => void) => {
-      asyncLocalStorage.run({ ...callback(), sessionId: uuid() }, () => next());
+      asyncLocalStorage.run({ ...callback(req), sessionId: uuid() }, () => next());
     };
   }
 
