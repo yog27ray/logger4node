@@ -24,6 +24,9 @@ export declare class Logger {
     private readonly callbacks;
     private static errorStack;
     private static jsonTransformArgs;
+    private static handleJSONSpecialCharacter;
+    private static stringifyJSON;
+    private static generateLogSource;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
     warn(formatter: unknown, ...args: Array<unknown>): void;
@@ -31,9 +34,8 @@ export declare class Logger {
     error(formatter: unknown, ...args: Array<unknown>): void;
     fatal(formatter: unknown, ...args: Array<unknown>): void;
     constructor(loggerName: string, callbacks: Callback);
+    log(logSeverity: LogSeverity, extraData: Record<string, unknown>, formatter: unknown, ...args: Array<unknown>): void;
     private transformArgs;
     private isLogEnabled;
-    private log;
-    private static handleJSONSpecialCharacter;
 }
 export {};

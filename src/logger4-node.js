@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger4Node = void 0;
 const logger_1 = require("./logger");
+const trace_1 = require("./trace");
 class Logger4Node {
     static setLogLevel(logSeverity) {
         (0, logger_1.setLogLevel)(logSeverity);
@@ -31,6 +32,7 @@ class Logger4Node {
     }
 }
 exports.Logger4Node = Logger4Node;
+Logger4Node.Trace = trace_1.Trace;
 Logger4Node.setLogLevel(process.env.DEBUG_LEVEL);
 Logger4Node.setLogPattern(process.env.DEBUG);
 Object.keys(logger_1.LogLevel)

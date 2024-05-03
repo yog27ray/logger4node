@@ -1,34 +1,11 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = void 0;
 const util_1 = __importDefault(require("util"));
-const fs = __importStar(require("node:fs"));
+const trace_1 = require("./trace");
 exports.LogLevel = {
     verbose: 1,
     debug: 2,
@@ -45,6 +22,7 @@ exports.DisplaySeverityMap = {
     error: 'Error',
     fatal: 'Fatal',
 };
+const currentFolder = __dirname;
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
     const negative = [];
@@ -112,27 +90,84 @@ class Logger {
         }));
         return this.handleJSONSpecialCharacter(message);
     }
+    static handleJSONSpecialCharacter(message) {
+        return message
+            .replace(/\\/g, '\\\\')
+            .replace(/\t/g, '\\t')
+            .replace(/"/g, '\\"')
+            .replace(/\r\n/g, '\\r\\n')
+            .replace(/\n/g, '\\n');
+    }
+    static stringifyJSON(json = {}) {
+        const jsonString = JSON.stringify(json);
+        if (jsonString === '{}') {
+            return '';
+        }
+        return jsonString;
+    }
+    static generateLogSource() {
+        const { stack } = new Error();
+        const logSource = stack.split('\n')
+            .find((line) => !line.includes(currentFolder)
+            && line.trim().startsWith('at '));
+        if (!logSource) {
+            return '';
+        }
+        if (logSource[logSource.length - 1] === ')') {
+            const [caller, filePath] = logSource.split(' (');
+            const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
+            const [fileName, line, column] = filePathSplit.pop().split(':');
+            return JSON.stringify({
+                caller: caller.split('at ')[1],
+                fileName,
+                path: filePathSplit.join('/'),
+                line,
+                column,
+            });
+        }
+        const filePathSplit = logSource.split('at ')[1].split('/');
+        const [fileName, line, column] = filePathSplit.pop().split(':');
+        return JSON.stringify({
+            fileName,
+            path: filePathSplit.join('/'),
+            line,
+            column,
+        });
+    }
     verbose(formatter, ...args) {
-        this.log("verbose" /* LogSeverity.VERBOSE */, formatter, ...args);
+        this.log("verbose" /* LogSeverity.VERBOSE */, {}, formatter, ...args);
     }
     info(formatter, ...args) {
-        this.log("info" /* LogSeverity.INFO */, formatter, ...args);
+        this.log("info" /* LogSeverity.INFO */, {}, formatter, ...args);
     }
     warn(formatter, ...args) {
-        this.log("warn" /* LogSeverity.WARN */, formatter, ...args);
+        this.log("warn" /* LogSeverity.WARN */, {}, formatter, ...args);
     }
     debug(formatter, ...args) {
-        this.log("debug" /* LogSeverity.DEBUG */, formatter, ...args);
+        this.log("debug" /* LogSeverity.DEBUG */, {}, formatter, ...args);
     }
     error(formatter, ...args) {
-        this.log("error" /* LogSeverity.ERROR */, formatter, ...args);
+        this.log("error" /* LogSeverity.ERROR */, {}, formatter, ...args);
     }
     fatal(formatter, ...args) {
-        this.log("fatal" /* LogSeverity.FATAL */, formatter, ...args);
+        this.log("fatal" /* LogSeverity.FATAL */, {}, formatter, ...args);
     }
     constructor(loggerName, callbacks) {
         this.name = loggerName;
         this.callbacks = callbacks;
+    }
+    log(logSeverity, extraData, formatter, ...args) {
+        if (!this.isLogEnabled(logSeverity)) {
+            return;
+        }
+        if (this.callbacks.jsonLogging()) {
+            const source = Logger.generateLogSource();
+            const sessionInfoString = Logger.stringifyJSON(trace_1.Trace.getSessionInfo());
+            const extraDataString = Logger.stringifyJSON(extraData);
+            console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"${sessionInfoString ? `, "session": ${sessionInfoString}` : ''}${extraDataString ? `, "extraData": ${extraDataString}` : ''}${source ? `, "source": ${source}` : ''}}`);
+            return;
+        }
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
     }
     transformArgs(...args) {
         return args.map((each) => {
@@ -162,25 +197,6 @@ class Logger {
             return false;
         }
         return isMatchWithPatterns(positive, this.name);
-    }
-    log(logSeverity, formatter, ...args) {
-        if (!this.isLogEnabled(logSeverity)) {
-            return;
-        }
-        if (this.callbacks.jsonLogging()) {
-            console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`);
-            fs.writeFileSync('./test.txt', `{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"}`, 'utf-8');
-            return;
-        }
-        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
-    }
-    static handleJSONSpecialCharacter(message) {
-        return message
-            .replace(/\\/g, '\\\\')
-            // .replace(/([^\\])"/g, '$1\\"')
-            .replace(/"/g, '\\"')
-            .replace(/\r\n/g, '\\r\\n')
-            .replace(/\n/g, '\\n');
     }
 }
 exports.Logger = Logger;

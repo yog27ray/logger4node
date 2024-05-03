@@ -1,5 +1,7 @@
 import { Logger, LogSeverity } from './logger';
+import { Trace } from './trace';
 export declare class Logger4Node {
+    static Trace: typeof Trace;
     private readonly _applicationName;
     private stringLogging;
     private jsonLogging;
