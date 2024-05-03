@@ -25,8 +25,8 @@ exports.DisplaySeverityMap = {
 const ignoreFolders = [
     `${process.cwd()}/src/logger.ts`,
     `${process.cwd()}/src/logger4-node.ts`,
-    `${process.cwd()}/logger4node/src/logger.ts`,
-    `${process.cwd()}/logger4node/src/logger4-node.ts`,
+    `${process.cwd()}/node_modules/src/logger.ts`,
+    `${process.cwd()}/node_modules/src/logger4-node.ts`,
 ];
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
