@@ -1,8 +1,8 @@
-import { v4 as uuid } from 'uuid';
 import { AsyncLocalStorage } from 'async_hooks';
 import http from 'http';
+import { v4 as uuid } from 'uuid';
 
-declare type SessionInfo = {
+declare interface SessionInfo {
     sessionId: string;
     [key: string]: string;
 }

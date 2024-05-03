@@ -112,6 +112,52 @@ export class Logger {
     return this.handleJSONSpecialCharacter(message);
   }
 
+  private static handleJSONSpecialCharacter(message: string): string {
+    return message
+      .replace(/\\/g, '\\\\')
+      .replace(/\t/g, '\\t')
+      .replace(/"/g, '\\"')
+      .replace(/\r\n/g, '\\r\\n')
+      .replace(/\n/g, '\\n');
+  }
+
+  private static stringifyJSON(json: Record<string, unknown> = {}): string {
+    const jsonString = JSON.stringify(json);
+    if (jsonString === '{}') {
+      return '';
+    }
+    return jsonString;
+  }
+
+  private static generateLogSource(): string {
+    const { stack } = new Error();
+    const logSource = stack.split('\n').find(line => !line.includes(currentFolder)
+        && line.trim().startsWith('at '));
+    if (!logSource) {
+      return '';
+    }
+    if (logSource[logSource.length - 1] === ')') {
+      const [caller, filePath] = logSource.split(' (');
+      const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
+      const [fileName, line, column] = filePathSplit.pop().split(':');
+      return JSON.stringify({
+        caller: caller.split('at ')[1],
+        fileName,
+        path: filePathSplit.join('/'),
+        line,
+        column,
+      });
+    }
+    const filePathSplit = logSource.split('at ')[1].split('/');
+    const [fileName, line, column] = filePathSplit.pop().split(':');
+    return JSON.stringify({
+      fileName,
+      path: filePathSplit.join('/'),
+      line,
+      column,
+    });
+  }
+
   verbose(formatter: unknown, ...args: Array<unknown>): void {
     this.log(LogSeverity.VERBOSE, {}, formatter, ...args);
   }
@@ -139,6 +185,33 @@ export class Logger {
   constructor(loggerName: string, callbacks: Callback) {
     this.name = loggerName;
     this.callbacks = callbacks;
+  }
+
+  log(
+    logSeverity: LogSeverity,
+    extraData: Record<string, unknown>,
+    formatter: unknown,
+    ...args: Array<unknown>): void {
+    if (!this.isLogEnabled(logSeverity)) {
+      return;
+    }
+    if (this.callbacks.jsonLogging()) {
+      const source = Logger.generateLogSource();
+      const sessionInfoString = Logger.stringifyJSON(Trace.getSessionInfo());
+      const extraDataString = Logger.stringifyJSON(extraData);
+      console.log(`{"className":"${this.name
+      }","level":"${logSeverity
+      }","message":"${Logger.jsonTransformArgs(formatter, ...args)
+      }","stack":"${Logger.errorStack(formatter, ...args)}"${
+        sessionInfoString ? `, "session": ${sessionInfoString}` : ''}${
+        extraDataString ? `, "extraData": ${extraDataString}` : ''}${
+        source ? `, "source": ${source}` : ''}}`);
+      return;
+    }
+    console.log(
+      `${DisplaySeverityMap[logSeverity]}:`,
+      this.name,
+      util.format(formatter, ...this.transformArgs(...args)));
   }
 
   private transformArgs(...args: Array<unknown>): Array<unknown> {
@@ -170,78 +243,5 @@ export class Logger {
       return false;
     }
     return isMatchWithPatterns(positive, this.name);
-  }
-
-  log(
-    logSeverity: LogSeverity,
-    extraData: Record<string, unknown>,
-    formatter: unknown,
-    ...args: Array<unknown>): void {
-    if (!this.isLogEnabled(logSeverity)) {
-      return;
-    }
-    if (this.callbacks.jsonLogging()) {
-      const source = Logger.generateLogSource();
-      const sessionInfoString = Logger.stringifyJSON(Trace.getSessionInfo());
-      const extraDataString = Logger.stringifyJSON(extraData);
-      console.log(`{"className":"${this.name
-      }","level":"${logSeverity
-      }","message":"${Logger.jsonTransformArgs(formatter, ...args)
-      }","stack":"${Logger.errorStack(formatter, ...args)}"${
-        sessionInfoString ? `, "session": ${sessionInfoString}` : ''}${
-        extraDataString ? `, "extraData": ${extraDataString}` : ''}${
-        source ? `, "source": ${source}` : ''}}`);
-      return;
-    }
-    console.log(
-      `${DisplaySeverityMap[logSeverity]}:`,
-      this.name,
-      util.format(formatter, ...this.transformArgs(...args)));
-  }
-
-  private static handleJSONSpecialCharacter(message: string): string {
-    return message
-      .replace(/\\/g, '\\\\')
-      .replace(/\t/g, '\\t')
-      .replace(/"/g, '\\"')
-      .replace(/\r\n/g, '\\r\\n')
-      .replace(/\n/g, '\\n');
-  }
-
-  private static stringifyJSON(json: Record<string, unknown> = {}): string {
-    const jsonString = JSON.stringify(json);
-    if (jsonString === '{}') {
-      return '';
-    }
-    return jsonString;
-  }
-
-  private static generateLogSource(): string {
-    const { stack } = new Error();
-    const logSource = stack.split('\n').find((line) => !line.includes(currentFolder)
-        && line.trim().startsWith('at '));
-    if (!logSource) {
-      return '';
-    }
-    if (logSource[logSource.length - 1] === ')') {
-      const [caller, filePath] = logSource.split(' (');
-      const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
-      const [fileName, line, column] = filePathSplit.pop().split(':');
-      return JSON.stringify({
-        caller: caller.split('at ')[1],
-        fileName,
-        path: filePathSplit.join('/'),
-        line,
-        column,
-      });
-    }
-    const filePathSplit = logSource.split('at ')[1].split('/');
-    const [fileName, line, column] = filePathSplit.pop().split(':');
-    return JSON.stringify({
-      fileName,
-      path: filePathSplit.join('/'),
-      line,
-      column,
-    });
   }
 }

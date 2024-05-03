@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import sinon, { SinonSpy } from 'sinon';
 import { IncomingMessage, ServerResponse } from 'http';
+import sinon, { SinonSpy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from '../src/logger';
 import { Logger4Node } from '../src/logger4-node';
 
@@ -152,7 +152,9 @@ describe('Logger4nodeJSON', () => {
 
     it('should print session information', () => {
       Logger4Node.setLogPattern('Logger1:*,-Logger1:Instance2*');
-      Logger4Node.Trace.requestHandler(function testName() { return ({ key1: 'value1', key2: 'value2' }) })({} as IncomingMessage, {} as ServerResponse, () => {
+      Logger4Node.Trace.requestHandler(function testName(): Record<string, string> {
+        return ({ key1: 'value1', key2: 'value2' });
+      })({} as IncomingMessage, {} as ServerResponse, () => {
         printLogsInDifferentLevel(logger1Instance1);
         logger1Instance1.log(LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
       });
@@ -160,8 +162,8 @@ describe('Logger4nodeJSON', () => {
       const calls = new Array(6)
           .fill(0)
           .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
-          .map((each) => JSON.parse(each));
-      calls.forEach((each) => {
+          .map(each => JSON.parse(each));
+      calls.forEach(each => {
         expect(each.session.sessionId).to.exist;
         delete each.session.sessionId;
       });
@@ -406,7 +408,7 @@ describe('Logger4nodeJSON', () => {
           type: 'ERROR_SERVER_NOT_START';
           constructor() {
             super();
-            this.message = 'Received an error with invalid JSON from Parse: <html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>'
+            this.message = 'Received an error with invalid JSON from Parse: <html>\r\n<head><title>503 Service Temporarily Unavailable</title></head>\r\n<body>\r\n<center><h1>503 Service Temporarily Unavailable</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>';
           }
         }();
       } catch (error) {
