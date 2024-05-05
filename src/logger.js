@@ -22,12 +22,13 @@ exports.DisplaySeverityMap = {
     error: 'Error',
     fatal: 'Fatal',
 };
-const ignoreFolders = [
-    `${process.cwd()}/src/logger.ts`,
-    `${process.cwd()}/src/logger4-node.ts`,
-    `${process.cwd()}/node_modules/src/logger.ts`,
-    `${process.cwd()}/node_modules/src/logger4-node.ts`,
-];
+const currentFolder = __dirname;
+// const ignoreFolders = [
+//   `${process.cwd()}/src/logger.ts`,
+//   `${process.cwd()}/src/logger4-node.ts`,
+//   `${process.cwd()}/node_modules/src/logger.ts`,
+//   `${process.cwd()}/node_modules/src/logger4-node.ts`,
+// ];
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
     const negative = [];
@@ -113,8 +114,9 @@ class Logger {
     static generateLogSource() {
         const { stack } = new Error();
         const logSource = stack.split('\n')
-            .find((line) => !ignoreFolders.some((folder) => line.includes(folder))
-            && line.trim().startsWith('at '));
+            // .find((line): boolean => !ignoreFolders.some((folder: string): boolean => line.includes(folder))
+            //     && line.trim().startsWith('at '));
+            .find((line) => !line.includes(currentFolder) && line.trim().startsWith('at '));
         if (!logSource) {
             return '';
         }
