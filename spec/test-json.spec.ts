@@ -72,23 +72,23 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger1Instance1);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
       expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
       expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
       expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
     });
@@ -103,23 +103,23 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
       expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
       expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
       expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
     });
@@ -130,11 +130,11 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(2);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
     });
@@ -146,15 +146,15 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(3);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
       expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"warn","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source":'
+        .equal('{"level":"warn","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
     });
@@ -164,48 +164,48 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger1Instance2);
       expect(callbackSpy.callCount).to.equal(10);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
       expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
       expect(callbackSpy.getCall(3).args.join(' '))
-        .to.equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .to.equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
         + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
         + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
       expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"14","column":"10"},"message":"error log"}');
       expect(callbackSpy.getCall(5).args.join(' ')).to
-        .equal('{"level":"verbose","time":5,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","stack":"","source":'
+        .equal('{"level":"verbose","time":5,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"10","column":"10"},"message":"verbose log"}');
       expect(callbackSpy.getCall(6).args.join(' ')).to
-        .equal('{"level":"debug","time":6,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","stack":"","source":'
+        .equal('{"level":"debug","time":6,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"11","column":"10"},"message":"debug log"}');
       expect(callbackSpy.getCall(7).args.join(' ')).to
-        .equal('{"level":"info","time":7,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","stack":"","source":'
+        .equal('{"level":"info","time":7,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"12","column":"10"},"message":"info log"}');
       expect(callbackSpy.getCall(8).args.join(' ')).to
-        .equal('{"level":"warn","time":8,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","stack":"","source":'
+        .equal('{"level":"warn","time":8,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"13","column":"10"},"message":"warn log"}');
       expect(callbackSpy.getCall(9).args.join(' ')).to
-        .equal('{"level":"error","time":9,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","stack":"","source":'
+        .equal('{"level":"error","time":9,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"14","column":"10"},"message":"error log"}');
@@ -217,27 +217,27 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentLevel(logger1Instance2);
       expect(callbackSpy.callCount).to.equal(5);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"10","column":"10"},"message":"verbose log"}');
       expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source":'
+        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
           + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"11","column":"10"},"message":"debug log"}');
       expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source"'
+        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
           + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"12","column":"10"},"message":"info log"}');
       expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source"'
+        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
           + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"13","column":"10"},"message":"warn log"}');
       expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source"'
+        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
           + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"14","column":"10"},"message":"error log"}');
@@ -258,7 +258,7 @@ describe('Logger4nodeJSON', () => {
         .fill(0)
         .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
         .map((each): { request: { id: string } } => JSON.parse(each) as { request: { id: string } });
-      calls.forEach(each_ => {
+      calls.forEach((each_) => {
         const each = each_;
         expect(each.request.id).to.exist;
         delete each.request.id;
@@ -270,7 +270,6 @@ describe('Logger4nodeJSON', () => {
         hostname: 'hostname',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
-        stack: '',
         source: {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
@@ -286,7 +285,6 @@ describe('Logger4nodeJSON', () => {
         hostname: 'hostname',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
-        stack: '',
         source: {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
@@ -302,7 +300,6 @@ describe('Logger4nodeJSON', () => {
         hostname: 'hostname',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
-        stack: '',
         source: {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
@@ -319,7 +316,6 @@ describe('Logger4nodeJSON', () => {
         hostname: 'hostname',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
-        stack: '',
         source: {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
@@ -336,7 +332,6 @@ describe('Logger4nodeJSON', () => {
         hostname: 'hostname',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
-        stack: '',
         source: {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
@@ -354,7 +349,6 @@ describe('Logger4nodeJSON', () => {
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         extra: { extraField: 'extraValue' },
-        stack: '',
         source: {
           caller: 'printLogsWithExtraFields',
           fileName: 'test-logs.ts',
@@ -400,7 +394,7 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentType(logger1Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
           + ':{"caller":"printLogsInDifferentType","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"24","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
@@ -410,7 +404,7 @@ describe('Logger4nodeJSON', () => {
       await printLogsInDifferentType(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source"'
           + ':{"caller":"printLogsInDifferentType","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"24","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
@@ -420,7 +414,7 @@ describe('Logger4nodeJSON', () => {
       await printFatalLogsInDifferentType(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"fatal","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","stack":"","source"'
+        .equal('{"level":"fatal","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source"'
           + ':{"caller":"printFatalLogsInDifferentType","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"29","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
@@ -454,22 +448,21 @@ describe('Logger4nodeJSON', () => {
       await wait();
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
           + ':{"caller":"Context.<anonymous>","fileName":"test-json.spec.ts","path":"'
           + `${currentFolder}`
-          + '","line":"453","column":"22"},"message":"this is string {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
+          + '","line":"447","column":"22"},"message":"this is string {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
       expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
         level: 'error',
         time: 0,
         pid: 1,
         hostname: 'hostname',
         className: 'Logger:Instance',
-        stack: '',
         source: {
           caller: 'Context.<anonymous>',
           fileName: 'test-json.spec.ts',
           path: currentFolder,
-          line: '453',
+          line: '447',
           column: '22',
         },
         message: 'this is string {\\"var\\":1,\\"var2\\":2}',
@@ -480,7 +473,7 @@ describe('Logger4nodeJSON', () => {
       await printLogWithMultipleEndCharacters(loggerInstance);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
           + ':{"caller":"printLogWithMultipleEndCharacters","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"34","column":"10"},"message":"this is line1\\\\nline2\\\\nline2 {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
@@ -490,7 +483,6 @@ describe('Logger4nodeJSON', () => {
         pid: 1,
         hostname: 'hostname',
         className: 'Logger:Instance',
-        stack: '',
         source: {
           caller: 'printLogWithMultipleEndCharacters',
           fileName: 'test-logs.ts',
@@ -505,7 +497,7 @@ describe('Logger4nodeJSON', () => {
     it('should log properly when message contains \\"', async () => {
       await printLogWithBackSlashCharacter(loggerInstance);
       expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
           + ':{"caller":"printLogWithBackSlashCharacter","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"39","column":"10"},"message":"this is line1 \\\\\\\\\\\\\\" {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
@@ -515,7 +507,6 @@ describe('Logger4nodeJSON', () => {
         pid: 1,
         hostname: 'hostname',
         className: 'Logger:Instance',
-        stack: '',
         source: {
           caller: 'printLogWithBackSlashCharacter',
           fileName: 'test-logs.ts',
@@ -531,7 +522,7 @@ describe('Logger4nodeJSON', () => {
       await printLogWithSpecialTabCharacter(loggerInstance);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
           + ':{"caller":"printLogWithSpecialTabCharacter","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"44","column":"10"},"message":"this is line1 \\\\t"}');
@@ -541,7 +532,6 @@ describe('Logger4nodeJSON', () => {
         pid: 1,
         hostname: 'hostname',
         className: 'Logger:Instance',
-        stack: '',
         source: {
           caller: 'printLogWithSpecialTabCharacter',
           fileName: 'test-logs.ts',
@@ -594,7 +584,7 @@ describe('Logger4nodeJSON', () => {
       await printLogSingleLine(loggerInstance);
       expect(callbackSpy.callCount).to.equal(1);
       expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","stack":"","source"'
+        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
           + ':{"caller":"printLogSingleLine","fileName":"test-logs.ts","path":"'
           + `${currentFolder}`
           + '","line":"49","column":"10","github":"https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224'
@@ -605,7 +595,6 @@ describe('Logger4nodeJSON', () => {
         pid: 1,
         hostname: 'hostname',
         className: 'Logger:Instance',
-        stack: '',
         source: {
           caller: 'printLogSingleLine',
           fileName: 'test-logs.ts',
