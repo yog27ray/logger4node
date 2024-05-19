@@ -258,7 +258,7 @@ describe('Logger4nodeJSON', () => {
         .fill(0)
         .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
         .map((each): { request: { id: string } } => JSON.parse(each) as { request: { id: string } });
-      calls.forEach((each_) => {
+      calls.forEach((each_: { request: { id: string } }) => {
         const each = each_;
         expect(each.request.id).to.exist;
         delete each.request.id;
