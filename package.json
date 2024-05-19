@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run copy-test-logger && NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
     "build": "rm -rf dist/* && tsc -p ./ && npm run copy-build-files",
-    "copy-build-files": "cp ./src/pino/pino.transform.js ./dist/src/pino/pino.transform.js && cp ./README.md ./dist/README.md",
+    "copy-build-files": "cp ./src/pino/pino.transform.js ./dist/src/pino/pino.transform.js && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "copy-test-logger": "cp ./spec/pino.logger.test.ts ./src/pino/pino.logger.ts",
     "coverage": "npm run copy-test-logger && nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
   },
