@@ -1,5 +1,5 @@
-import { Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeverityPattern } from './logger';
-import { Trace } from './trace';
+import { Trace } from '../trace/trace';
+import { GithubConfig, Logger, LogLevel, LogSeverity, setLogLevel, setLogPattern, setLogSeverityPattern } from './logger';
 
 export class Logger4Node {
   static Trace = Trace;
@@ -9,6 +9,8 @@ export class Logger4Node {
   private stringLogging: boolean = false;
 
   private jsonLogging: boolean = false;
+
+  private readonly github: GithubConfig;
 
   static setLogLevel(logSeverity: LogSeverity): void {
     setLogLevel(logSeverity);
@@ -30,12 +32,14 @@ export class Logger4Node {
     this.jsonLogging = jsonLogging;
   }
 
-  constructor(applicationName: string) {
+  constructor(applicationName: string, option: { github?: GithubConfig; } = {}) {
     this._applicationName = applicationName;
+    this.github = option.github ? { ...option.github } : undefined;
   }
 
   instance(name: string): Logger {
     return new Logger(`${this._applicationName}:${name}`, {
+      github: this.github,
       jsonLogging: () => this.jsonLogging,
       stringLogging: () => this.stringLogging,
     });
