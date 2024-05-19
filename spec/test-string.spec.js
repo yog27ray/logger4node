@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
 const sinon_1 = __importDefault(require("sinon"));
-const logger_1 = require("../src/logger");
-const logger4_node_1 = require("../src/logger4-node");
+const logger_1 = require("../src/logger/logger");
+const logger4_node_1 = require("../src/logger/logger4-node");
 function printLogsInDifferentLevel(logger) {
     logger.verbose('verbose log');
     logger.debug('debug log');

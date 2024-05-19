@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = void 0;
 const util_1 = __importDefault(require("util"));
-const trace_1 = require("./trace");
+const pino_logger_1 = require("../pino/pino.logger");
+const trace_1 = require("../trace/trace");
 exports.LogLevel = {
     verbose: 1,
     debug: 2,
@@ -83,9 +84,13 @@ function setLogSeverityPattern(level, pattern) {
 exports.setLogSeverityPattern = setLogSeverityPattern;
 class Logger {
     static errorStack(...args) {
-        return this.handleJSONSpecialCharacter(args
+        const errorStacks = args
             .filter((each) => (each instanceof Error))
-            .map((each) => each.stack).join('\\n|\\n'));
+            .map((each) => each.stack);
+        if (!errorStacks.length) {
+            return undefined;
+        }
+        return this.handleJSONSpecialCharacter(errorStacks.join('\\n|\\n'));
     }
     static jsonTransformArgs(...args) {
         const message = util_1.default.format(...args.map((each) => {
@@ -104,90 +109,93 @@ class Logger {
             .replace(/\r\n/g, '\\r\\n')
             .replace(/\n/g, '\\n');
     }
-    static stringifyJSON(json = {}) {
-        const jsonString = JSON.stringify(json);
-        if (jsonString === '{}') {
-            return '';
-        }
-        return jsonString;
+    verbose(formatter, ...args) {
+        this.log("verbose" /* LogSeverity.VERBOSE */, undefined, formatter, ...args);
     }
-    static generateLogSource() {
+    info(formatter, ...args) {
+        this.log("info" /* LogSeverity.INFO */, undefined, formatter, ...args);
+    }
+    warn(formatter, ...args) {
+        this.log("warn" /* LogSeverity.WARN */, undefined, formatter, ...args);
+    }
+    debug(formatter, ...args) {
+        this.log("debug" /* LogSeverity.DEBUG */, undefined, formatter, ...args);
+    }
+    error(formatter, ...args) {
+        this.log("error" /* LogSeverity.ERROR */, undefined, formatter, ...args);
+    }
+    fatal(formatter, ...args) {
+        this.log("fatal" /* LogSeverity.FATAL */, undefined, formatter, ...args);
+    }
+    constructor(loggerName, config) {
+        this.name = loggerName;
+        this.config = config;
+    }
+    log(logSeverity, extraData, formatter, ...args) {
+        if (!this.isLogEnabled(logSeverity)) {
+            return;
+        }
+        if (this.config.jsonLogging()) {
+            const source = this.generateLogSource();
+            const logMessage = Logger.jsonTransformArgs(formatter, ...args);
+            pino_logger_1.pinoLogger.fatal({
+                className: this.name,
+                level: logSeverity,
+                request: trace_1.Trace.getRequestInfo(),
+                extra: extraData,
+                stack: Logger.errorStack(formatter, ...args),
+                source,
+            }, logMessage);
+            return;
+        }
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
+    }
+    generateLogSource() {
         const { stack } = new Error();
         const logSource = stack.split('\n')
             // .find((line): boolean => !ignoreFolders.some((folder: string): boolean => line.includes(folder))
             //     && line.trim().startsWith('at '));
             .find((line) => !line.includes(currentFolder) && line.trim().startsWith('at '));
         if (!logSource) {
-            return '';
+            return undefined;
         }
         if (logSource[logSource.length - 1] === ')') {
             const [caller, filePath] = logSource.split(' (');
             if (!filePath) {
-                return '';
+                return undefined;
             }
             const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
             const [fileName, line, column] = filePathSplit.pop().split(':');
             if (!fileName || !line || !column) {
-                return '';
+                return undefined;
             }
-            return JSON.stringify({
+            const path = filePathSplit.join('/');
+            return {
                 caller: caller.split('at ')[1],
                 fileName,
-                path: filePathSplit.join('/'),
+                path,
                 line,
                 column,
-            });
+                github: this.generateGithubLink(`${path}/${fileName}`, line),
+            };
         }
         const filePathSplit = logSource.split('at ')[1].split('/');
         const [fileName, line, column] = filePathSplit.pop().split(':');
         if (!fileName || !line || !column) {
-            return '';
+            return undefined;
         }
-        return JSON.stringify({
+        const path = filePathSplit.join('/');
+        return {
             fileName,
-            path: filePathSplit.join('/'),
+            path,
             line,
             column,
-        });
-    }
-    verbose(formatter, ...args) {
-        this.log("verbose" /* LogSeverity.VERBOSE */, {}, formatter, ...args);
-    }
-    info(formatter, ...args) {
-        this.log("info" /* LogSeverity.INFO */, {}, formatter, ...args);
-    }
-    warn(formatter, ...args) {
-        this.log("warn" /* LogSeverity.WARN */, {}, formatter, ...args);
-    }
-    debug(formatter, ...args) {
-        this.log("debug" /* LogSeverity.DEBUG */, {}, formatter, ...args);
-    }
-    error(formatter, ...args) {
-        this.log("error" /* LogSeverity.ERROR */, {}, formatter, ...args);
-    }
-    fatal(formatter, ...args) {
-        this.log("fatal" /* LogSeverity.FATAL */, {}, formatter, ...args);
-    }
-    constructor(loggerName, callbacks) {
-        this.name = loggerName;
-        this.callbacks = callbacks;
-    }
-    log(logSeverity, extraData, formatter, ...args) {
-        if (!this.isLogEnabled(logSeverity)) {
-            return;
-        }
-        if (this.callbacks.jsonLogging()) {
-            const source = Logger.generateLogSource();
-            const sessionInfoString = Logger.stringifyJSON(trace_1.Trace.getSessionInfo());
-            const extraDataString = Logger.stringifyJSON(extraData);
-            console.log(`{"className":"${this.name}","level":"${logSeverity}","message":"${Logger.jsonTransformArgs(formatter, ...args)}","stack":"${Logger.errorStack(formatter, ...args)}"${sessionInfoString ? `, "session": ${sessionInfoString}` : ''}${extraDataString ? `, "extraData": ${extraDataString}` : ''}${source ? `, "source": ${source}` : ''}}`);
-            return;
-        }
-        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
+            github: this.generateGithubLink(`${path}/${fileName}`, line),
+        };
     }
     transformArgs(...args) {
         return args.map((each) => {
-            if (!this.callbacks.stringLogging()) {
+            if (!this.config.stringLogging()) {
                 return each;
             }
             if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
@@ -213,6 +221,13 @@ class Logger {
             return false;
         }
         return isMatchWithPatterns(positive, this.name);
+    }
+    generateGithubLink(file, line) {
+        if (!this.config.github) {
+            return undefined;
+        }
+        const githubFilePath = file.split(this.config.github.basePath)[1];
+        return `https://github.com/${this.config.github.org}/${this.config.github.repo}/blob/${this.config.github.commitHash}${githubFilePath}#L${line}`;
     }
 }
 exports.Logger = Logger;

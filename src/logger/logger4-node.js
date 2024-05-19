@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger4Node = void 0;
+const trace_1 = require("../trace/trace");
 const logger_1 = require("./logger");
-const trace_1 = require("./trace");
 class Logger4Node {
     static setLogLevel(logSeverity) {
         (0, logger_1.setLogLevel)(logSeverity);
@@ -19,13 +19,15 @@ class Logger4Node {
     setJsonLogging(jsonLogging) {
         this.jsonLogging = jsonLogging;
     }
-    constructor(applicationName) {
+    constructor(applicationName, option = {}) {
         this.stringLogging = false;
         this.jsonLogging = false;
         this._applicationName = applicationName;
+        this.github = option.github ? { ...option.github } : undefined;
     }
     instance(name) {
         return new logger_1.Logger(`${this._applicationName}:${name}`, {
+            github: this.github,
             jsonLogging: () => this.jsonLogging,
             stringLogging: () => this.stringLogging,
         });
