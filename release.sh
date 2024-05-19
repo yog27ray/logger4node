@@ -8,8 +8,8 @@ git checkout master
 git pull
 node_modules/eslint/bin/eslint.js  --ext .ts src
 npm i
-npm run build
 VERSION=$(npm version patch)
+npm run build
 cd dist
 git add *
 git commit -m "$VERSION"
