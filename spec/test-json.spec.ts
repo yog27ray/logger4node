@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { Tail } from 'tail';
-import * as fs from 'node:fs';
 import { IncomingMessage, ServerResponse } from 'http';
+import * as fs from 'node:fs';
 import sinon, { SinonSpy } from 'sinon';
-import { LogLevel, LogSeverity, Logger } from '../src/logger/logger';
+import { Tail } from 'tail';
+import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import {
   printFatalLogsInDifferentType,
@@ -39,7 +39,7 @@ const loggerSpy = {
 fs.writeFileSync('./spec/test.logs', '', 'utf-8');
 new Tail('./spec/test.logs')
   .on('line', (data: string) => loggerSpy.log(data))
-  .on('error', (error) => console.log(error))
+  .on('error', (error: Error) => console.log(error))
   .watch();
 
 describe('Logger4nodeJSON', () => {
@@ -258,7 +258,7 @@ describe('Logger4nodeJSON', () => {
         .fill(0)
         .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
         .map((each): { request: { id: string } } => JSON.parse(each) as { request: { id: string } });
-      calls.forEach((each_) => {
+      calls.forEach(each_ => {
         const each = each_;
         expect(each.request.id).to.exist;
         delete each.request.id;
