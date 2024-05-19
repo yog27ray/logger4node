@@ -276,6 +276,9 @@ export class Logger {
       return undefined;
     }
     const githubFilePath = file.split(this.config.github.basePath)[1];
+    if (githubFilePath.includes('node_modules')) {
+      return undefined;
+    }
     return `https://github.com/${this.config.github.org}/${this.config.github.repo
     }/blob/${this.config.github.commitHash}${githubFilePath}#L${line}`;
   }
