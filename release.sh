@@ -7,7 +7,7 @@ cd ..
 git checkout master
 git pull
 node_modules/eslint/bin/eslint.js  --ext .ts src
-tsc -p ./
+npm run build
 VERSION=$(npm version patch)
 npm i
 cp package.json ./dist/package.json
