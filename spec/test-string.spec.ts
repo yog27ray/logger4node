@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon, { SinonSpy } from 'sinon';
-import { Logger, LogLevel, LogSeverity } from '../src/logger';
-import { Logger4Node } from '../src/logger4-node';
+import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
+import { Logger4Node } from '../src/logger/logger4-node';
 
 function printLogsInDifferentLevel(logger: Logger): void {
   logger.verbose('verbose log');
