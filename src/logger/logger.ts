@@ -9,7 +9,7 @@ export declare interface GithubConfig {
   repo: string;
 }
 
-export const enum LogSeverity {
+export enum LogSeverity {
   VERBOSE = 'verbose',
   DEBUG = 'debug',
   INFO = 'info',
