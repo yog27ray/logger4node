@@ -3,10 +3,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = void 0;
+exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = exports.LogSeverity = void 0;
 const util_1 = __importDefault(require("util"));
 const pino_logger_1 = require("../pino/pino.logger");
 const trace_1 = require("../trace/trace");
+var LogSeverity;
+(function (LogSeverity) {
+    LogSeverity["VERBOSE"] = "verbose";
+    LogSeverity["DEBUG"] = "debug";
+    LogSeverity["INFO"] = "info";
+    LogSeverity["WARN"] = "warn";
+    LogSeverity["ERROR"] = "error";
+    LogSeverity["FATAL"] = "fatal";
+})(LogSeverity || (exports.LogSeverity = LogSeverity = {}));
 exports.LogLevel = {
     verbose: 1,
     debug: 2,
@@ -57,12 +66,12 @@ let positive = [];
 let negative = [];
 let minLogLevelEnabled = exports.LogLevel.debug;
 const LOG_PATTERN = {
-    ["verbose" /* LogSeverity.VERBOSE */]: { positive: [], negative: [] },
-    ["info" /* LogSeverity.INFO */]: { positive: [], negative: [] },
-    ["warn" /* LogSeverity.WARN */]: { positive: [], negative: [] },
-    ["debug" /* LogSeverity.DEBUG */]: { positive: [], negative: [] },
-    ["error" /* LogSeverity.ERROR */]: { positive: [], negative: [] },
-    ["fatal" /* LogSeverity.FATAL */]: { positive: [], negative: [] },
+    [LogSeverity.VERBOSE]: { positive: [], negative: [] },
+    [LogSeverity.INFO]: { positive: [], negative: [] },
+    [LogSeverity.WARN]: { positive: [], negative: [] },
+    [LogSeverity.DEBUG]: { positive: [], negative: [] },
+    [LogSeverity.ERROR]: { positive: [], negative: [] },
+    [LogSeverity.FATAL]: { positive: [], negative: [] },
 };
 function isNotMatchWithPatterns(patterns, value) {
     return patterns.every((pattern) => !new RegExp(`^${pattern}$`).test(value));
@@ -71,7 +80,7 @@ function isMatchWithPatterns(patterns, value) {
     return patterns.some((pattern) => new RegExp(`^${pattern}$`).test(value));
 }
 function setLogLevel(logSeverity) {
-    minLogLevelEnabled = exports.LogLevel[logSeverity] || exports.LogLevel["debug" /* LogSeverity.DEBUG */];
+    minLogLevelEnabled = exports.LogLevel[logSeverity] || exports.LogLevel[LogSeverity.DEBUG];
 }
 exports.setLogLevel = setLogLevel;
 function setLogPattern(pattern) {
@@ -110,22 +119,22 @@ class Logger {
             .replace(/\n/g, '\\n');
     }
     verbose(formatter, ...args) {
-        this.log("verbose" /* LogSeverity.VERBOSE */, undefined, formatter, ...args);
+        this.log(LogSeverity.VERBOSE, undefined, formatter, ...args);
     }
     info(formatter, ...args) {
-        this.log("info" /* LogSeverity.INFO */, undefined, formatter, ...args);
+        this.log(LogSeverity.INFO, undefined, formatter, ...args);
     }
     warn(formatter, ...args) {
-        this.log("warn" /* LogSeverity.WARN */, undefined, formatter, ...args);
+        this.log(LogSeverity.WARN, undefined, formatter, ...args);
     }
     debug(formatter, ...args) {
-        this.log("debug" /* LogSeverity.DEBUG */, undefined, formatter, ...args);
+        this.log(LogSeverity.DEBUG, undefined, formatter, ...args);
     }
     error(formatter, ...args) {
-        this.log("error" /* LogSeverity.ERROR */, undefined, formatter, ...args);
+        this.log(LogSeverity.ERROR, undefined, formatter, ...args);
     }
     fatal(formatter, ...args) {
-        this.log("fatal" /* LogSeverity.FATAL */, undefined, formatter, ...args);
+        this.log(LogSeverity.FATAL, undefined, formatter, ...args);
     }
     constructor(loggerName, config) {
         this.name = loggerName;

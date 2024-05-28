@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.printLogWithNewLineAndSlashNCharacter = exports.printLogSingleLine = exports.printLogWithSpecialTabCharacter = exports.printLogWithBackSlashCharacter = exports.printLogWithMultipleEndCharacters = exports.printFatalLogsInDifferentType = exports.printLogsInDifferentType = exports.printLogsWithExtraFields = exports.printLogsInDifferentLevel = exports.wait = void 0;
+const logger_1 = require("../src/logger/logger");
 function wait(time = 100) {
     return new Promise((resolve) => {
         setTimeout(() => resolve(), time);
@@ -17,7 +18,7 @@ async function printLogsInDifferentLevel(logger) {
 }
 exports.printLogsInDifferentLevel = printLogsInDifferentLevel;
 async function printLogsWithExtraFields(logger) {
-    logger.log("error" /* LogSeverity.ERROR */, { extraField: 'extraValue' }, 'verbose log');
+    logger.log(logger_1.LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
     await wait(100);
 }
 exports.printLogsWithExtraFields = printLogsWithExtraFields;

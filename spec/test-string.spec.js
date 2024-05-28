@@ -34,7 +34,7 @@ describe('Logger4nodeString', () => {
         });
         beforeEach(() => {
             logger4_node_1.Logger4Node.setLogPattern('Logger1:*');
-            logger4_node_1.Logger4Node.setLogLevel("verbose" /* LogSeverity.VERBOSE */);
+            logger4_node_1.Logger4Node.setLogLevel(logger_1.LogSeverity.VERBOSE);
             Object.keys(logger_1.LogLevel).forEach((logSeverity) => logger4_node_1.Logger4Node.setLogSeverityPattern(logSeverity, undefined));
             callbackSpy = sinon_1.default.spy(console, 'log');
         });
@@ -62,7 +62,7 @@ describe('Logger4nodeString', () => {
             (0, chai_1.expect)(callbackSpy.getCall(4).args.join(' ')).to.equal('Error: Logger2:Instance1 error log');
         });
         it('should print only Logger1 Debug  and above logs', () => {
-            logger4_node_1.Logger4Node.setLogLevel("warn" /* LogSeverity.WARN */);
+            logger4_node_1.Logger4Node.setLogLevel(logger_1.LogSeverity.WARN);
             printLogsInDifferentLevel(logger1Instance1);
             printLogsInDifferentLevel(logger2Instance1);
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(2);
@@ -70,8 +70,8 @@ describe('Logger4nodeString', () => {
             (0, chai_1.expect)(callbackSpy.getCall(1).args.join(' ')).to.equal('Error: Logger1:Instance1 error log');
         });
         it('should print only Logger1 Debug  and above logs and logger2 only Debug: ', () => {
-            logger4_node_1.Logger4Node.setLogLevel("warn" /* LogSeverity.WARN */);
-            logger4_node_1.Logger4Node.setLogSeverityPattern("warn" /* LogSeverity.WARN */, 'Logger2:*');
+            logger4_node_1.Logger4Node.setLogLevel(logger_1.LogSeverity.WARN);
+            logger4_node_1.Logger4Node.setLogSeverityPattern(logger_1.LogSeverity.WARN, 'Logger2:*');
             printLogsInDifferentLevel(logger1Instance1);
             printLogsInDifferentLevel(logger2Instance1);
             (0, chai_1.expect)(callbackSpy.callCount).to.equal(3);
@@ -124,7 +124,7 @@ describe('Logger4nodeString', () => {
         });
         beforeEach(() => {
             logger4_node_1.Logger4Node.setLogPattern('Logger1:*,Logger2:*');
-            logger4_node_1.Logger4Node.setLogLevel("verbose" /* LogSeverity.VERBOSE */);
+            logger4_node_1.Logger4Node.setLogLevel(logger_1.LogSeverity.VERBOSE);
             Object.keys(logger_1.LogLevel).forEach((logSeverity) => logger4_node_1.Logger4Node.setLogSeverityPattern(logSeverity, undefined));
             callbackSpy = sinon_1.default.spy(console, 'log');
         });
