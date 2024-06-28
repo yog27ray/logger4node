@@ -6,7 +6,7 @@ const pinoLogger = pino({
       { target: './pino.transform.js' },
       {
         target: 'pino/file',
-        options: { destination: 1 },
+        options: { destination: './spec/test.logs' },
       },
     ],
   },

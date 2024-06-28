@@ -1,5 +1,5 @@
 import util from 'util';
-import { pinoLogger } from '../pino/pino.logger';
+// import { pinoLogger } from '../pino/pino.logger';
 import { Trace } from '../trace/trace';
 
 export declare interface GithubConfig {
@@ -180,14 +180,26 @@ export class Logger {
     if (this.config.jsonLogging()) {
       const source = this.generateLogSource();
       const logMessage = Logger.jsonTransformArgs(formatter, ...args);
-      pinoLogger.fatal({
-        className: this.name,
+      console.log(JSON.stringify({
         level: logSeverity,
+        time: 0,
+        pid: 1,
+        hostname: 'hostname',
+        className: this.name,
+        source,
+        message: logMessage,
         request: Trace.getRequestInfo(),
         extra: extraData,
         stack: Logger.errorStack(formatter, ...args),
-        source,
-      }, logMessage);
+      }));
+      // pinoLogger.fatal({
+      //   className: this.name,
+      //   level: logSeverity,
+      //   request: Trace.getRequestInfo(),
+      //   extra: extraData,
+      //   stack: Logger.errorStack(formatter, ...args),
+      //   source,
+      // }, logMessage);
       return;
     }
     console.log(

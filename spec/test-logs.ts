@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import { SinonSpy } from 'sinon';
+import { Tail } from 'tail';
 import { Logger, LogSeverity } from '../src/logger/logger';
 
 export function wait(time: number = 100): Promise<void> {
@@ -69,3 +72,43 @@ export async function printLogWithNewLineAndSlashNCharacter(logger: Logger): Pro
   }
   await wait(100);
 }
+
+const spyConsoleLog: Array<string> = [];
+
+function updatePIDAndHostname(_each: Record<string, unknown>): void {
+  const each = _each;
+  each.pid = 1;
+  each.hostname = 'hostname';
+}
+
+const loggerSpy = {
+  log(_data: string): void {
+    let data = _data;
+    const json = JSON.parse(data) as Record<string, unknown>;
+    json.time = spyConsoleLog.length;
+    updatePIDAndHostname(json);
+    data = JSON.stringify(json);
+    console.log(JSON.stringify(json));
+    spyConsoleLog.push(data);
+  },
+  reset(): void {
+    spyConsoleLog.splice(0, spyConsoleLog.length);
+  },
+};
+
+fs.writeFileSync('./spec/test.logs', '', 'utf-8');
+new Tail('./spec/test.logs')
+  .on('line', (data: string) => loggerSpy.log(data))
+  .on('error', (error: Error) => console.log(error))
+  .watch();
+
+export function stringLogsToJSON(spy: SinonSpy): Array<Record<string, unknown>> {
+  return new Array(spy.callCount).fill(0).map((zero, index): Record<string, unknown> => {
+    const jsonLog = JSON.parse(spy.getCall(index).args.join(' ')) as Record<string, unknown>;
+    jsonLog.time = index;
+    updatePIDAndHostname(jsonLog);
+    return jsonLog;
+  });
+}
+
+export { loggerSpy };

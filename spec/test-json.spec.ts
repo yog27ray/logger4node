@@ -1,11 +1,10 @@
 import { expect } from 'chai';
 import { IncomingMessage, ServerResponse } from 'http';
-import * as fs from 'node:fs';
 import sinon, { SinonSpy } from 'sinon';
-import { Tail } from 'tail';
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import {
+  loggerSpy,
   printFatalLogsInDifferentType,
   printLogsInDifferentLevel,
   printLogsInDifferentType, printLogSingleLine,
@@ -13,34 +12,10 @@ import {
   printLogWithBackSlashCharacter,
   printLogWithMultipleEndCharacters,
   printLogWithNewLineAndSlashNCharacter,
-  printLogWithSpecialTabCharacter, wait,
+  printLogWithSpecialTabCharacter, stringLogsToJSON, wait,
 } from './test-logs';
 
 const currentFolder = __dirname;
-
-const spyConsoleLog: Array<string> = [];
-
-const loggerSpy = {
-  log(_data: string): void {
-    let data = _data;
-    const json = JSON.parse(data);
-    json.time = spyConsoleLog.length;
-    json.pid = 1;
-    json.hostname = 'hostname';
-    data = JSON.stringify(json);
-    console.log(JSON.stringify(json));
-    spyConsoleLog.push(data);
-  },
-  reset(): void {
-    spyConsoleLog.splice(0, spyConsoleLog.length);
-  },
-};
-
-fs.writeFileSync('./spec/test.logs', '', 'utf-8');
-new Tail('./spec/test.logs')
-  .on('line', (data: string) => loggerSpy.log(data))
-  .on('error', (error: Error) => console.log(error))
-  .watch();
 
 describe('Logger4nodeJSON', () => {
   context('logging in different level', () => {
@@ -70,27 +45,84 @@ describe('Logger4nodeJSON', () => {
 
     it('should print all logs', async () => {
       await printLogsInDifferentLevel(logger1Instance1);
-      expect(callbackSpy.callCount).to.equal(5);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
-      expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
-      expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
-      expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'verbose',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '13',
+            column: '10',
+          },
+          message: 'verbose log',
+        },
+        {
+          level: 'debug',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '14',
+            column: '10',
+          },
+          message: 'debug log',
+        },
+        {
+          level: 'info',
+          time: 2,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '15',
+            column: '10',
+          },
+          message: 'info log',
+        },
+        {
+          level: 'warn',
+          time: 3,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 4,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+      ]);
     });
 
     it('should not print logger2 logs', async () => {
@@ -101,42 +133,123 @@ describe('Logger4nodeJSON', () => {
     it('should allow print logger2 logs', async () => {
       Logger4Node.setLogPattern('Logger1:*,Logger2:*');
       await printLogsInDifferentLevel(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(5);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
-      expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
-      expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
-      expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'verbose',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '13',
+            column: '10',
+          },
+          message: 'verbose log',
+        },
+        {
+          level: 'debug',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '14',
+            column: '10',
+          },
+          message: 'debug log',
+        },
+        {
+          level: 'info',
+          time: 2,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '15',
+            column: '10',
+          },
+          message: 'info log',
+        },
+        {
+          level: 'warn',
+          time: 3,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 4,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+      ]);
     });
 
     it('should print only Logger1 Debug  and above logs', async () => {
       Logger4Node.setLogLevel(LogSeverity.WARN);
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(2);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'warn',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+      ]);
     });
 
     it('should print only Logger1 Debug  and above logs and logger2 only Debug: ', async () => {
@@ -144,103 +257,296 @@ describe('Logger4nodeJSON', () => {
       Logger4Node.setLogSeverityPattern(LogSeverity.WARN, 'Logger2:*');
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(3);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"warn","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"error","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"14","column":"10"},"message":"error log"}`);
-      expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"warn","time":2,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'warn',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+        {
+          level: 'warn',
+          time: 2,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+      ]);
     });
 
     it('should print both instance of Logger1', async () => {
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger1Instance2);
-      expect(callbackSpy.callCount).to.equal(10);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"10","column":"10"},"message":"verbose log"}`);
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"11","column":"10"},"message":"debug log"}`);
-      expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}","line":"12","column":"10"},"message":"info log"}`);
-      expect(callbackSpy.getCall(3).args.join(' '))
-        .to.equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-        + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-        + `${currentFolder}","line":"13","column":"10"},"message":"warn log"}`);
-      expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"14","column":"10"},"message":"error log"}');
-      expect(callbackSpy.getCall(5).args.join(' ')).to
-        .equal('{"level":"verbose","time":5,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"10","column":"10"},"message":"verbose log"}');
-      expect(callbackSpy.getCall(6).args.join(' ')).to
-        .equal('{"level":"debug","time":6,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"11","column":"10"},"message":"debug log"}');
-      expect(callbackSpy.getCall(7).args.join(' ')).to
-        .equal('{"level":"info","time":7,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"12","column":"10"},"message":"info log"}');
-      expect(callbackSpy.getCall(8).args.join(' ')).to
-        .equal('{"level":"warn","time":8,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"13","column":"10"},"message":"warn log"}');
-      expect(callbackSpy.getCall(9).args.join(' ')).to
-        .equal('{"level":"error","time":9,"pid":1,"hostname":"hostname","className":"Logger1:Instance2","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"14","column":"10"},"message":"error log"}');
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'verbose',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '13',
+            column: '10',
+          },
+          message: 'verbose log',
+        },
+        {
+          level: 'debug',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '14',
+            column: '10',
+          },
+          message: 'debug log',
+        },
+        {
+          level: 'info',
+          time: 2,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '15',
+            column: '10',
+          },
+          message: 'info log',
+        },
+        {
+          level: 'warn',
+          time: 3,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 4,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+        {
+          level: 'verbose',
+          time: 5,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance2',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '13',
+            column: '10',
+          },
+          message: 'verbose log',
+        },
+        {
+          level: 'debug',
+          time: 6,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance2',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '14',
+            column: '10',
+          },
+          message: 'debug log',
+        },
+        {
+          level: 'info',
+          time: 7,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance2',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '15',
+            column: '10',
+          },
+          message: 'info log',
+        },
+        {
+          level: 'warn',
+          time: 8,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance2',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 9,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance2',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+      ]);
     });
 
     it('should print only instance1 of Logger1', async () => {
       Logger4Node.setLogPattern('Logger1:*,-Logger1:Instance2*');
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger1Instance2);
-      expect(callbackSpy.callCount).to.equal(5);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"verbose","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"10","column":"10"},"message":"verbose log"}');
-      expect(callbackSpy.getCall(1).args.join(' ')).to
-        .equal('{"level":"debug","time":1,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source":'
-          + '{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"11","column":"10"},"message":"debug log"}');
-      expect(callbackSpy.getCall(2).args.join(' ')).to
-        .equal('{"level":"info","time":2,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
-          + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"12","column":"10"},"message":"info log"}');
-      expect(callbackSpy.getCall(3).args.join(' ')).to
-        .equal('{"level":"warn","time":3,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
-          + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"13","column":"10"},"message":"warn log"}');
-      expect(callbackSpy.getCall(4).args.join(' ')).to
-        .equal('{"level":"error","time":4,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
-          + ':{"caller":"printLogsInDifferentLevel","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"14","column":"10"},"message":"error log"}');
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'verbose',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '13',
+            column: '10',
+          },
+          message: 'verbose log',
+        },
+        {
+          level: 'debug',
+          time: 1,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '14',
+            column: '10',
+          },
+          message: 'debug log',
+        },
+        {
+          level: 'info',
+          time: 2,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '15',
+            column: '10',
+          },
+          message: 'info log',
+        },
+        {
+          level: 'warn',
+          time: 3,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '16',
+            column: '10',
+          },
+          message: 'warn log',
+        },
+        {
+          level: 'error',
+          time: 4,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentLevel',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '17',
+            column: '10',
+          },
+          message: 'error log',
+        },
+      ]);
     });
 
     it('should print session information', async () => {
@@ -274,60 +580,13 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '10',
+          line: '13',
           column: '10',
         },
         message: 'verbose log',
       }, {
         level: 'debug',
-        time: 1,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger1:Instance1',
-        request: { key1: 'value1', key2: 'value2' },
-        source: {
-          caller: 'printLogsInDifferentLevel',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '11',
-          column: '10',
-        },
-        message: 'debug log',
-      }, {
-        level: 'info',
-        time: 2,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger1:Instance1',
-        request: { key1: 'value1', key2: 'value2' },
-        source: {
-          caller: 'printLogsInDifferentLevel',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '12',
-          column: '10',
-        },
-        message: 'info log',
-      },
-      {
-        level: 'warn',
-        time: 3,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger1:Instance1',
-        request: { key1: 'value1', key2: 'value2' },
-        source: {
-          caller: 'printLogsInDifferentLevel',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '13',
-          column: '10',
-        },
-        message: 'warn log',
-      },
-      {
-        level: 'error',
-        time: 4,
+        time: 0,
         pid: 1,
         hostname: 'hostname',
         className: 'Logger1:Instance1',
@@ -339,11 +598,58 @@ describe('Logger4nodeJSON', () => {
           line: '14',
           column: '10',
         },
+        message: 'debug log',
+      }, {
+        level: 'info',
+        time: 0,
+        pid: 1,
+        hostname: 'hostname',
+        className: 'Logger1:Instance1',
+        request: { key1: 'value1', key2: 'value2' },
+        source: {
+          caller: 'printLogsInDifferentLevel',
+          fileName: 'test-logs.ts',
+          path: currentFolder,
+          line: '15',
+          column: '10',
+        },
+        message: 'info log',
+      },
+      {
+        level: 'warn',
+        time: 0,
+        pid: 1,
+        hostname: 'hostname',
+        className: 'Logger1:Instance1',
+        request: { key1: 'value1', key2: 'value2' },
+        source: {
+          caller: 'printLogsInDifferentLevel',
+          fileName: 'test-logs.ts',
+          path: currentFolder,
+          line: '16',
+          column: '10',
+        },
+        message: 'warn log',
+      },
+      {
+        level: 'error',
+        time: 0,
+        pid: 1,
+        hostname: 'hostname',
+        className: 'Logger1:Instance1',
+        request: { key1: 'value1', key2: 'value2' },
+        source: {
+          caller: 'printLogsInDifferentLevel',
+          fileName: 'test-logs.ts',
+          path: currentFolder,
+          line: '17',
+          column: '10',
+        },
         message: 'error log',
       },
       {
         level: 'error',
-        time: 5,
+        time: 0,
         pid: 1,
         hostname: 'hostname',
         className: 'Logger1:Instance1',
@@ -353,7 +659,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsWithExtraFields',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '19',
+          line: '22',
           column: '10',
         },
         message: 'verbose log',
@@ -392,32 +698,68 @@ describe('Logger4nodeJSON', () => {
 
     it('should print logs not only in string', async () => {
       await printLogsInDifferentType(logger1Instance1);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger1:Instance1","source"'
-          + ':{"caller":"printLogsInDifferentType","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"24","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger1:Instance1',
+          source: {
+            caller: 'printLogsInDifferentType',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '27',
+            column: '10',
+          },
+          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+        },
+      ]);
     });
 
     it('should print logs only in string', async () => {
       await printLogsInDifferentType(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source"'
-          + ':{"caller":"printLogsInDifferentType","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"24","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printLogsInDifferentType',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '27',
+            column: '10',
+          },
+          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+        },
+      ]);
     });
 
     it('should print logs only in string for fatal', async () => {
       await printFatalLogsInDifferentType(logger2Instance1);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('{"level":"fatal","time":0,"pid":1,"hostname":"hostname","className":"Logger2:Instance1","source"'
-          + ':{"caller":"printFatalLogsInDifferentType","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"29","column":"10"},"message":"this is  1 true {\\\\\\"key1\\\\\\":1,\\\\\\"value\\\\\\":2}"}');
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'fatal',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger2:Instance1',
+          source: {
+            caller: 'printFatalLogsInDifferentType',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '32',
+            column: '10',
+          },
+          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+        },
+      ]);
     });
 
     afterEach(() => {
@@ -443,104 +785,70 @@ describe('Logger4nodeJSON', () => {
       callbackSpy = sinon.spy(console, 'log');
     });
 
-    it('should log object with string in proper json format', async () => {
-      loggerInstance.error('this is string', { var: 1, var2: 2 });
-      await wait();
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
-          + ':{"caller":"Context.<anonymous>","fileName":"test-json.spec.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"447","column":"22"},"message":"this is string {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
-      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
-        level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger:Instance',
-        source: {
-          caller: 'Context.<anonymous>',
-          fileName: 'test-json.spec.ts',
-          path: currentFolder,
-          line: '447',
-          column: '22',
-        },
-        message: 'this is string {\\"var\\":1,\\"var2\\":2}',
-      });
-    });
-
     it('should log multi line string in one line', async () => {
       await printLogWithMultipleEndCharacters(loggerInstance);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
-          + ':{"caller":"printLogWithMultipleEndCharacters","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"34","column":"10"},"message":"this is line1\\\\nline2\\\\nline2 {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
-      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
-        level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger:Instance',
-        source: {
-          caller: 'printLogWithMultipleEndCharacters',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '34',
-          column: '10',
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger:Instance',
+          source: {
+            caller: 'printLogWithMultipleEndCharacters',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '37',
+            column: '10',
+          },
+          message: 'this is line1\\nline2\\nline2 {\\"var\\":1,\\"var2\\":2}',
         },
-        message: 'this is line1\\nline2\\nline2 {\\"var\\":1,\\"var2\\":2}',
-      });
+      ]);
     });
 
     it('should log properly when message contains \\"', async () => {
       await printLogWithBackSlashCharacter(loggerInstance);
-      expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
-          + ':{"caller":"printLogWithBackSlashCharacter","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"39","column":"10"},"message":"this is line1 \\\\\\\\\\\\\\" {\\\\\\"var\\\\\\":1,\\\\\\"var2\\\\\\":2}"}');
-      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
-        level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger:Instance',
-        source: {
-          caller: 'printLogWithBackSlashCharacter',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '39',
-          column: '10',
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger:Instance',
+          source: {
+            caller: 'printLogWithBackSlashCharacter',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '42',
+            column: '10',
+          },
+          message: 'this is line1 \\\\\\" {\\"var\\":1,\\"var2\\":2}',
         },
-        message: 'this is line1 \\\\\\" {\\"var\\":1,\\"var2\\":2}',
-      });
+      ]);
     });
 
     it('should log properly when message contains \t', async () => {
       await printLogWithSpecialTabCharacter(loggerInstance);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
-          + ':{"caller":"printLogWithSpecialTabCharacter","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"44","column":"10"},"message":"this is line1 \\\\t"}');
-      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
-        level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger:Instance',
-        source: {
-          caller: 'printLogWithSpecialTabCharacter',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '44',
-          column: '10',
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger:Instance',
+          source: {
+            caller: 'printLogWithSpecialTabCharacter',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '47',
+            column: '10',
+          },
+          message: 'this is line1 \\t',
         },
-        message: 'this is line1 \\t',
-      });
+      ]);
     });
 
     it('should log properly when message contains new line character with \n', async () => {
@@ -582,29 +890,25 @@ describe('Logger4nodeJSON', () => {
 
     it('should log github detail', async () => {
       await printLogSingleLine(loggerInstance);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args[0]).to
-        .equal('{"level":"error","time":0,"pid":1,"hostname":"hostname","className":"Logger:Instance","source"'
-          + ':{"caller":"printLogSingleLine","fileName":"test-logs.ts","path":"'
-          + `${currentFolder}`
-          + '","line":"49","column":"10","github":"https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224'
-          + '/spec/test-logs.ts#L49"},"message":"this is string"}');
-      expect(JSON.parse(callbackSpy.getCall(0).args[0] as string)).to.deep.equal({
-        level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
-        className: 'Logger:Instance',
-        source: {
-          caller: 'printLogSingleLine',
-          fileName: 'test-logs.ts',
-          path: currentFolder,
-          line: '49',
-          column: '10',
-          github: 'https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224/spec/test-logs.ts#L49',
+      const logs = stringLogsToJSON(callbackSpy);
+      expect(logs).to.deep.equal([
+        {
+          level: 'error',
+          time: 0,
+          pid: 1,
+          hostname: 'hostname',
+          className: 'Logger:Instance',
+          source: {
+            caller: 'printLogSingleLine',
+            fileName: 'test-logs.ts',
+            path: currentFolder,
+            line: '52',
+            column: '10',
+            github: 'https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224/spec/test-logs.ts#L52',
+          },
+          message: 'this is string',
         },
-        message: 'this is string',
-      });
+      ]);
     });
 
     afterEach(() => {
