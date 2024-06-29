@@ -67,18 +67,8 @@ function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, 
   return [positive, negative];
 }
 
-let positive: Array<string> = [];
-let negative: Array<string> = [];
-let minLogLevelEnabled = LogLevel.debug;
-
-const LOG_PATTERN: { [key in LogSeverity]: { negative: Array<string>; positive: Array<string>; } } = {
-  [LogSeverity.VERBOSE]: { positive: [], negative: [] },
-  [LogSeverity.INFO]: { positive: [], negative: [] },
-  [LogSeverity.WARN]: { positive: [], negative: [] },
-  [LogSeverity.DEBUG]: { positive: [], negative: [] },
-  [LogSeverity.ERROR]: { positive: [], negative: [] },
-  [LogSeverity.FATAL]: { positive: [], negative: [] },
-};
+export declare interface LogPattern { negative: Array<string>; positive: Array<string>; }
+export declare type LogSeverityPattern = { [key in LogSeverity]: LogPattern };
 
 function isNotMatchWithPatterns(patterns: Array<string>, value: string): boolean {
   return patterns.every((pattern: string) => !new RegExp(`^${pattern}$`).test(value));
@@ -88,20 +78,27 @@ function isMatchWithPatterns(patterns: Array<string>, value: string): boolean {
   return patterns.some((pattern: string) => new RegExp(`^${pattern}$`).test(value));
 }
 
-export function setLogLevel(logSeverity: LogSeverity): void {
-  minLogLevelEnabled = LogLevel[logSeverity] || LogLevel[LogSeverity.DEBUG];
+export function setLogPattern(logPattern: LogPattern, pattern: string): void {
+  logPattern.positive.splice(0, logPattern.positive.length);
+  logPattern.negative.splice(0, logPattern.positive.length);
+  const [positive, negative] = generateMatchAndDoesNotMatchArray(pattern);
+  logPattern.positive.push(...positive);
+  logPattern.negative.push(...negative);
 }
 
-export function setLogPattern(pattern: string): void {
-  ([positive, negative] = generateMatchAndDoesNotMatchArray(pattern));
-}
-
-export function setLogSeverityPattern(level: LogSeverity, pattern: string): void {
-  ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
+export function setLogSeverityPattern(logSeverityPattern: LogSeverityPattern, level: LogSeverity, pattern: string): void {
+  logSeverityPattern[level].positive.splice(0, logSeverityPattern[level].positive.length);
+  logSeverityPattern[level].negative.splice(0, logSeverityPattern[level].positive.length);
+  const [positive, negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []];
+  logSeverityPattern[level].positive.push(...positive);
+  logSeverityPattern[level].negative.push(...negative);
 }
 
 declare interface LoggerConfig {
   github: GithubConfig;
+  logSeverityPattern: LogSeverityPattern;
+  logPattern: LogPattern;
+  minLogLevelEnabled(): number;
   stringLogging(): boolean;
   jsonLogging(): boolean;
 }
@@ -118,7 +115,8 @@ export class Logger {
     if (!errorStacks.length) {
       return undefined;
     }
-    return this.handleJSONSpecialCharacter(errorStacks.join('\\n|\\n'));
+    // return this.handleJSONSpecialCharacter(errorStacks.join('\\n|\\n'));
+    return errorStacks.join('\\n|\\n');
   }
 
   private static jsonTransformArgs(...args: Array<unknown>): string {
@@ -128,7 +126,8 @@ export class Logger {
       }
       return JSON.stringify(each);
     }));
-    return this.handleJSONSpecialCharacter(message);
+    // return this.handleJSONSpecialCharacter(message);
+    return message;
   }
 
   private static handleJSONSpecialCharacter(message: string): string {
@@ -268,19 +267,19 @@ export class Logger {
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
-    if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
+    if (!isNotMatchWithPatterns(this.config.logSeverityPattern[logSeverity].negative, this.name)) {
       return false;
     }
-    if (isMatchWithPatterns(LOG_PATTERN[logSeverity].positive, this.name)) {
+    if (isMatchWithPatterns(this.config.logSeverityPattern[logSeverity].positive, this.name)) {
       return true;
     }
-    if (LogLevel[logSeverity] < minLogLevelEnabled) {
+    if (LogLevel[logSeverity] < this.config.minLogLevelEnabled()) {
       return false;
     }
-    if (!isNotMatchWithPatterns(negative, this.name)) {
+    if (!isNotMatchWithPatterns(this.config.logPattern.negative, this.name)) {
       return false;
     }
-    return isMatchWithPatterns(positive, this.name);
+    return isMatchWithPatterns(this.config.logPattern.positive, this.name);
   }
 
   private generateGithubLink(file: string, line: string): string {

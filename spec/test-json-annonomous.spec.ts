@@ -8,19 +8,20 @@ const currentFolder = __dirname;
 
 describe('Logger4nodeAnonymous', () => {
   context('logging string, object, array in one log', () => {
+    let logger: Logger4Node;
     let callbackSpy: SinonSpy;
     let loggerInstance: Logger;
 
     before(() => {
-      const logger = new Logger4Node('Logger');
+      logger = new Logger4Node('Logger');
       loggerInstance = logger.instance('Instance');
       logger.setJsonLogging(true);
     });
 
     beforeEach(() => {
-      Logger4Node.setLogPattern('Logger:*');
-      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
-      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      logger.setLogPattern('Logger:*');
+      logger.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity));
       callbackSpy = sinon.spy(console, 'log');
     });
 
@@ -39,10 +40,10 @@ describe('Logger4nodeAnonymous', () => {
           caller: 'Context.<anonymous>',
           fileName: 'test-json-annonomous.spec.ts',
           path: currentFolder,
-          line: '28',
+          line: '29',
           column: '22',
         },
-        message: 'this is string {\\"var\\":1,\\"var2\\":2}',
+        message: 'this is string {"var":1,"var2":2}',
       }]);
     });
 

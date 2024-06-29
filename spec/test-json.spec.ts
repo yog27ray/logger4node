@@ -37,9 +37,12 @@ describe('Logger4nodeJSON', () => {
     });
 
     beforeEach(() => {
-      Logger4Node.setLogPattern('Logger1:*');
-      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
-      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      logger1.setLogPattern('Logger1:*');
+      logger2.setLogPattern('Logger1:*');
+      logger1.setLogLevel(LogSeverity.VERBOSE);
+      logger2.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
       callbackSpy = sinon.spy(console, 'log');
     });
 
@@ -131,7 +134,8 @@ describe('Logger4nodeJSON', () => {
     });
 
     it('should allow print logger2 logs', async () => {
-      Logger4Node.setLogPattern('Logger1:*,Logger2:*');
+      logger2.setLogPattern('Logger1:*,Logger2:*');
+      logger2.setLogPattern('Logger1:*,Logger2:*');
       await printLogsInDifferentLevel(logger2Instance1);
       const logs = stringLogsToJSON(callbackSpy);
       expect(logs).to.deep.equal([
@@ -214,7 +218,8 @@ describe('Logger4nodeJSON', () => {
     });
 
     it('should print only Logger1 Debug  and above logs', async () => {
-      Logger4Node.setLogLevel(LogSeverity.WARN);
+      logger1.setLogLevel(LogSeverity.WARN);
+      logger2.setLogLevel(LogSeverity.WARN);
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger2Instance1);
       const logs = stringLogsToJSON(callbackSpy);
@@ -253,8 +258,10 @@ describe('Logger4nodeJSON', () => {
     });
 
     it('should print only Logger1 Debug  and above logs and logger2 only Debug: ', async () => {
-      Logger4Node.setLogLevel(LogSeverity.WARN);
-      Logger4Node.setLogSeverityPattern(LogSeverity.WARN, 'Logger2:*');
+      logger1.setLogLevel(LogSeverity.WARN);
+      logger2.setLogLevel(LogSeverity.WARN);
+      logger1.setLogSeverityPattern(LogSeverity.WARN, 'Logger2:*');
+      logger2.setLogSeverityPattern(LogSeverity.WARN, 'Logger2:*');
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger2Instance1);
       const logs = stringLogsToJSON(callbackSpy);
@@ -466,7 +473,8 @@ describe('Logger4nodeJSON', () => {
     });
 
     it('should print only instance1 of Logger1', async () => {
-      Logger4Node.setLogPattern('Logger1:*,-Logger1:Instance2*');
+      logger1.setLogPattern('Logger1:*,-Logger1:Instance2*');
+      logger2.setLogPattern('Logger1:*,-Logger1:Instance2*');
       await printLogsInDifferentLevel(logger1Instance1);
       await printLogsInDifferentLevel(logger1Instance2);
       const logs = stringLogsToJSON(callbackSpy);
@@ -550,7 +558,8 @@ describe('Logger4nodeJSON', () => {
     });
 
     it('should print session information', async () => {
-      Logger4Node.setLogPattern('Logger1:*,-Logger1:Instance2*');
+      logger1.setLogPattern('Logger1:*,-Logger1:Instance2*');
+      logger2.setLogPattern('Logger1:*,-Logger1:Instance2*');
       Logger4Node.Trace.requestHandler((): Record<string, string> => ({ key1: 'value1', key2: 'value2' }))(
         {} as IncomingMessage,
         {} as ServerResponse,
@@ -690,9 +699,12 @@ describe('Logger4nodeJSON', () => {
     });
 
     beforeEach(() => {
-      Logger4Node.setLogPattern('Logger1:*,Logger2:*');
-      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
-      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      logger1.setLogPattern('Logger1:*,Logger2:*');
+      logger2.setLogPattern('Logger1:*,Logger2:*');
+      logger1.setLogLevel(LogSeverity.VERBOSE);
+      logger2.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
       callbackSpy = sinon.spy(console, 'log');
     });
 
@@ -713,7 +725,7 @@ describe('Logger4nodeJSON', () => {
             line: '27',
             column: '10',
           },
-          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+          message: 'this is  1 true {"key1":1,"value":2}',
         },
       ]);
     });
@@ -735,7 +747,7 @@ describe('Logger4nodeJSON', () => {
             line: '27',
             column: '10',
           },
-          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+          message: 'this is  1 true {"key1":1,"value":2}',
         },
       ]);
     });
@@ -757,7 +769,7 @@ describe('Logger4nodeJSON', () => {
             line: '32',
             column: '10',
           },
-          message: 'this is  1 true {\\"key1\\":1,\\"value\\":2}',
+          message: 'this is  1 true {"key1":1,"value":2}',
         },
       ]);
     });
@@ -769,19 +781,20 @@ describe('Logger4nodeJSON', () => {
   });
 
   context('logging string, object, array in one log', () => {
+    let logger: Logger4Node;
     let callbackSpy: SinonSpy;
     let loggerInstance: Logger;
 
     before(() => {
-      const logger = new Logger4Node('Logger');
+      logger = new Logger4Node('Logger');
       loggerInstance = logger.instance('Instance');
       logger.setJsonLogging(true);
     });
 
     beforeEach(() => {
-      Logger4Node.setLogPattern('Logger:*');
-      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
-      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      logger.setLogPattern('Logger:*');
+      logger.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
       callbackSpy = sinon.spy(console, 'log');
     });
 
@@ -802,7 +815,7 @@ describe('Logger4nodeJSON', () => {
             line: '37',
             column: '10',
           },
-          message: 'this is line1\\nline2\\nline2 {\\"var\\":1,\\"var2\\":2}',
+          message: 'this is line1\nline2\nline2 {"var":1,"var2":2}',
         },
       ]);
     });
@@ -824,7 +837,7 @@ describe('Logger4nodeJSON', () => {
             line: '42',
             column: '10',
           },
-          message: 'this is line1 \\\\\\" {\\"var\\":1,\\"var2\\":2}',
+          message: 'this is line1 \\" {"var":1,"var2":2}',
         },
       ]);
     });
@@ -846,7 +859,7 @@ describe('Logger4nodeJSON', () => {
             line: '47',
             column: '10',
           },
-          message: 'this is line1 \\t',
+          message: 'this is line1 \t',
         },
       ]);
     });
@@ -864,12 +877,13 @@ describe('Logger4nodeJSON', () => {
   });
 
   context('github link logging', () => {
+    let logger: Logger4Node;
     let callbackSpy: SinonSpy;
     let loggerInstance: Logger;
 
     before(() => {
       const currentPathSplit = __dirname.split('/');
-      const logger = new Logger4Node('Logger', {
+      logger = new Logger4Node('Logger', {
         github: {
           basePath: currentPathSplit.slice(0, currentPathSplit.length - 1).join('/'),
           commitHash: 'fd4a2de07ed9e31d890370e05fb4b8a416f27224',
@@ -882,9 +896,9 @@ describe('Logger4nodeJSON', () => {
     });
 
     beforeEach(() => {
-      Logger4Node.setLogPattern('Logger:*');
-      Logger4Node.setLogLevel(LogSeverity.VERBOSE);
-      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => Logger4Node.setLogSeverityPattern(logSeverity, undefined));
+      logger.setLogPattern('Logger:*');
+      logger.setLogLevel(LogSeverity.VERBOSE);
+      Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
       callbackSpy = sinon.spy(console, 'log');
     });
 

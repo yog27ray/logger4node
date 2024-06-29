@@ -25,6 +25,7 @@
     "async_hooks": "1.0.0",
     "pino": "9.1.0",
     "pino-abstract-transport": "1.2.0",
+    "typia": "6.3.1",
     "util": "0.12.5",
     "uuid": "9.0.1"
   },
