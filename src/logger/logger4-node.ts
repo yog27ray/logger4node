@@ -71,7 +71,6 @@ export class Logger4Node {
       logPattern: this.logPattern,
       minLogLevelEnabled: () => this.minLogLevelEnabled,
       jsonLogging: () => this.jsonLogging,
-      stringLogging: () => this.stringLogging,
     });
   }
 }

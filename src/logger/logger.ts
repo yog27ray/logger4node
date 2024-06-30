@@ -1,5 +1,4 @@
 import util from 'util';
-// import { pinoLogger } from '../pino/pino.logger';
 import { Trace } from '../trace/trace';
 
 export declare interface GithubConfig {
@@ -37,12 +36,11 @@ export const DisplaySeverityMap: { [key in LogSeverity]: string } = {
 };
 
 const currentFolder = __dirname;
-// const ignoreFolders = [
-//   `${process.cwd()}/src/logger.ts`,
-//   `${process.cwd()}/src/logger4-node.ts`,
-//   `${process.cwd()}/node_modules/src/logger.ts`,
-//   `${process.cwd()}/node_modules/src/logger4-node.ts`,
-// ];
+
+function stringify(data: unknown): string {
+  return JSON.stringify(data);
+}
+
 function generateMatchAndDoesNotMatchArray(input: string = ''): [Array<string>, Array<string>] {
   const positive: Array<string> = [];
   const negative: Array<string> = [];
@@ -99,7 +97,6 @@ declare interface LoggerConfig {
   logSeverityPattern: LogSeverityPattern;
   logPattern: LogPattern;
   minLogLevelEnabled(): number;
-  stringLogging(): boolean;
   jsonLogging(): boolean;
 }
 
@@ -113,30 +110,30 @@ export class Logger {
       .filter((each): boolean => (each instanceof Error))
       .map((each: { stack?: string; }): string => each.stack);
     if (!errorStacks.length) {
-      return undefined;
+      return '';
     }
-    // return this.handleJSONSpecialCharacter(errorStacks.join('\\n|\\n'));
     return errorStacks.join('\\n|\\n');
   }
 
   private static jsonTransformArgs(...args: Array<unknown>): string {
-    const message = util.format(...args.map((each: unknown) => {
+    return util.format(...args.map((each: unknown) => {
+      if (['string', 'number', 'boolean', 'bigint', 'function'].includes(typeof each)) {
+        return each;
+      }
+      return stringify(each);
+    }));
+  }
+
+  private static transformArgs(...args: Array<unknown>): Array<unknown> {
+    return args.map((each: unknown) => {
       if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
         return each;
       }
-      return JSON.stringify(each);
-    }));
-    // return this.handleJSONSpecialCharacter(message);
-    return message;
-  }
-
-  private static handleJSONSpecialCharacter(message: string): string {
-    return message
-      .replace(/\\/g, '\\\\')
-      .replace(/\t/g, '\\t')
-      .replace(/"/g, '\\"')
-      .replace(/\r\n/g, '\\r\\n')
-      .replace(/\n/g, '\\n');
+      if (each instanceof Error) {
+        return each;
+      }
+      return stringify(each);
+    });
   }
 
   verbose(formatter: unknown, ...args: Array<unknown>): void {
@@ -177,34 +174,22 @@ export class Logger {
       return;
     }
     if (this.config.jsonLogging()) {
-      const source = this.generateLogSource();
-      const logMessage = Logger.jsonTransformArgs(formatter, ...args);
-      console.log(JSON.stringify({
+      console.log(stringify({
         level: logSeverity,
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: new Date().toISOString(),
         className: this.name,
-        source,
-        message: logMessage,
+        source: this.generateLogSource(),
+        message: Logger.jsonTransformArgs(formatter, ...args),
         request: Trace.getRequestInfo(),
-        extra: extraData,
+        extra: extraData || {},
         stack: Logger.errorStack(formatter, ...args),
       }));
-      // pinoLogger.fatal({
-      //   className: this.name,
-      //   level: logSeverity,
-      //   request: Trace.getRequestInfo(),
-      //   extra: extraData,
-      //   stack: Logger.errorStack(formatter, ...args),
-      //   source,
-      // }, logMessage);
       return;
     }
     console.log(
       `${DisplaySeverityMap[logSeverity]}:`,
       this.name,
-      util.format(formatter, ...this.transformArgs(...args)));
+      util.format(formatter, ...Logger.transformArgs(...args)));
   }
 
   private generateLogSource(): Record<string, string> {
@@ -214,17 +199,17 @@ export class Logger {
       //     && line.trim().startsWith('at '));
       .find((line): boolean => !line.includes(currentFolder) && line.trim().startsWith('at '));
     if (!logSource) {
-      return undefined;
+      return {};
     }
     if (logSource[logSource.length - 1] === ')') {
       const [caller, filePath] = logSource.split(' (');
       if (!filePath) {
-        return undefined;
+        return {};
       }
       const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
       const [fileName, line, column] = filePathSplit.pop().split(':');
       if (!fileName || !line || !column) {
-        return undefined;
+        return {};
       }
       const path = filePathSplit.join('/');
       return {
@@ -239,7 +224,7 @@ export class Logger {
     const filePathSplit = logSource.split('at ')[1].split('/');
     const [fileName, line, column] = filePathSplit.pop().split(':');
     if (!fileName || !line || !column) {
-      return undefined;
+      return {};
     }
     const path = filePathSplit.join('/');
     return {
@@ -249,21 +234,6 @@ export class Logger {
       column,
       github: this.generateGithubLink(`${path}/${fileName}`, line),
     };
-  }
-
-  private transformArgs(...args: Array<unknown>): Array<unknown> {
-    return args.map((each: unknown) => {
-      if (!this.config.stringLogging()) {
-        return each;
-      }
-      if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-        return each;
-      }
-      if (each instanceof Error) {
-        return each;
-      }
-      return JSON.stringify(each);
-    });
   }
 
   private isLogEnabled(logSeverity: LogSeverity): boolean {
