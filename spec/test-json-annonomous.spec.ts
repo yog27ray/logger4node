@@ -33,8 +33,8 @@ describe('Logger4nodeAnonymous', () => {
       expect(logs).to.deep.equal([{
         level: 'error',
         time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        extra: {},
+        stack: '',
         className: 'Logger:Instance',
         source: {
           caller: 'Context.<anonymous>',

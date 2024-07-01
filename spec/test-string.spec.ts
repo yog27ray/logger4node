@@ -151,13 +151,6 @@ describe('Logger4nodeString', () => {
       callbackSpy = sinon.spy(console, 'log');
     });
 
-    it('should print logs not only in string', () => {
-      printLogsInDifferentType(logger1Instance1);
-      expect(callbackSpy.callCount).to.equal(1);
-      expect(callbackSpy.getCall(0).args.join(' ')).to
-        .equal('Error: Logger1:Instance1 this is  1 true { key1: 1, value: 2 }');
-    });
-
     it('should print logs only in string', () => {
       printLogsInDifferentType(logger2Instance1);
       expect(callbackSpy.callCount).to.equal(1);

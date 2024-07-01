@@ -75,18 +75,11 @@ export async function printLogWithNewLineAndSlashNCharacter(logger: Logger): Pro
 
 const spyConsoleLog: Array<string> = [];
 
-function updatePIDAndHostname(_each: Record<string, unknown>): void {
-  const each = _each;
-  each.pid = 1;
-  each.hostname = 'hostname';
-}
-
 const loggerSpy = {
   log(_data: string): void {
     let data = _data;
     const json = JSON.parse(data) as Record<string, unknown>;
     json.time = spyConsoleLog.length;
-    updatePIDAndHostname(json);
     data = JSON.stringify(json);
     console.log(JSON.stringify(json));
     spyConsoleLog.push(data);
@@ -106,7 +99,6 @@ export function stringLogsToJSON(spy: SinonSpy): Array<Record<string, unknown>> 
   return new Array(spy.callCount).fill(0).map((zero, index): Record<string, unknown> => {
     const jsonLog = JSON.parse(spy.getCall(index).args.join(' ')) as Record<string, unknown>;
     jsonLog.time = index;
-    updatePIDAndHostname(jsonLog);
     return jsonLog;
   });
 }

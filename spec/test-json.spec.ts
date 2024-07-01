@@ -53,8 +53,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'verbose',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -68,8 +68,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'debug',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -83,8 +83,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'info',
           time: 2,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -98,8 +98,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 3,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -113,8 +113,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 4,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -142,8 +142,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'verbose',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -157,8 +157,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'debug',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -172,8 +172,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'info',
           time: 2,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -187,8 +187,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 3,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -202,8 +202,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 4,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -227,8 +227,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -242,8 +242,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -269,8 +269,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -284,8 +284,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -299,8 +299,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 2,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -322,8 +322,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'verbose',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -337,8 +337,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'debug',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -352,8 +352,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'info',
           time: 2,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -367,8 +367,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 3,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -382,8 +382,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 4,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -397,8 +397,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'verbose',
           time: 5,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance2',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -412,8 +412,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'debug',
           time: 6,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance2',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -427,8 +427,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'info',
           time: 7,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance2',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -442,8 +442,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 8,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance2',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -457,8 +457,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 9,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance2',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -482,8 +482,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'verbose',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -497,8 +497,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'debug',
           time: 1,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -512,8 +512,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'info',
           time: 2,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -527,8 +527,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'warn',
           time: 3,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -542,8 +542,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 4,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentLevel',
@@ -569,10 +569,7 @@ describe('Logger4nodeJSON', () => {
         });
       await wait(400);
       expect(callbackSpy.callCount).to.equal(6);
-      const calls = new Array(6)
-        .fill(0)
-        .map((zero, index) => callbackSpy.getCall(index).args.join(' '))
-        .map((each): { request: { id: string } } => JSON.parse(each) as { request: { id: string } });
+      const calls = stringLogsToJSON(callbackSpy);
       calls.forEach((each_: { request: { id: string } }) => {
         const each = each_;
         expect(each.request.id).to.exist;
@@ -581,8 +578,8 @@ describe('Logger4nodeJSON', () => {
       expect(calls).to.deep.equal([{
         level: 'verbose',
         time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        extra: {},
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         source: {
@@ -595,9 +592,9 @@ describe('Logger4nodeJSON', () => {
         message: 'verbose log',
       }, {
         level: 'debug',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: 1,
+        extra: {},
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         source: {
@@ -610,9 +607,9 @@ describe('Logger4nodeJSON', () => {
         message: 'debug log',
       }, {
         level: 'info',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: 2,
+        extra: {},
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         source: {
@@ -626,9 +623,9 @@ describe('Logger4nodeJSON', () => {
       },
       {
         level: 'warn',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: 3,
+        extra: {},
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         source: {
@@ -642,9 +639,9 @@ describe('Logger4nodeJSON', () => {
       },
       {
         level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: 4,
+        extra: {},
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         source: {
@@ -658,9 +655,8 @@ describe('Logger4nodeJSON', () => {
       },
       {
         level: 'error',
-        time: 0,
-        pid: 1,
-        hostname: 'hostname',
+        time: 5,
+        stack: '',
         className: 'Logger1:Instance1',
         request: { key1: 'value1', key2: 'value2' },
         extra: { extraField: 'extraValue' },
@@ -715,8 +711,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger1:Instance1',
           source: {
             caller: 'printLogsInDifferentType',
@@ -737,8 +733,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printLogsInDifferentType',
@@ -759,8 +755,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'fatal',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger2:Instance1',
           source: {
             caller: 'printFatalLogsInDifferentType',
@@ -805,8 +801,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger:Instance',
           source: {
             caller: 'printLogWithMultipleEndCharacters',
@@ -827,8 +823,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger:Instance',
           source: {
             caller: 'printLogWithBackSlashCharacter',
@@ -849,8 +845,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger:Instance',
           source: {
             caller: 'printLogWithSpecialTabCharacter',
@@ -909,8 +905,8 @@ describe('Logger4nodeJSON', () => {
         {
           level: 'error',
           time: 0,
-          pid: 1,
-          hostname: 'hostname',
+          extra: {},
+          stack: '',
           className: 'Logger:Instance',
           source: {
             caller: 'printLogSingleLine',
