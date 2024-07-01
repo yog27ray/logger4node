@@ -1,14 +1,13 @@
 {
   "name": "logger4node",
-  "version": "1.0.29",
+  "version": "1.0.32",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "npm run copy-test-logger && NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
     "build": "rm -rf dist/* && tsc -p ./ && npm run copy-build-files",
-    "copy-build-files": "cp ./src/pino/pino.transform.js ./dist/src/pino/pino.transform.js && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
-    "copy-test-logger": "cp ./spec/pino.logger.test.ts ./src/pino/pino.logger.ts",
-    "coverage": "npm run copy-test-logger && nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
+    "copy-build-files": "cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
+    "coverage": "nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
   },
   "repository": {
     "type": "git",
@@ -23,8 +22,6 @@
   "homepage": "https://github.com/yog27ray/logger4node#readme",
   "dependencies": {
     "async_hooks": "1.0.0",
-    "pino": "9.1.0",
-    "pino-abstract-transport": "1.2.0",
     "util": "0.12.5",
     "uuid": "9.0.1"
   },
@@ -32,22 +29,22 @@
     "@types/chai": "4.3.14",
     "@types/debug": "4.1.12",
     "@types/mocha": "10.0.6",
-    "@types/node": "20.12.12",
+    "@types/node": "20.14.8",
     "@types/sinon": "17.0.3",
     "@typescript-eslint/eslint-plugin": "7.9.0",
-    "@typescript-eslint/parser": "7.9.0",
+    "@typescript-eslint/parser": "7.14.1",
     "chai": "4.4.1",
     "eslint": "8.57.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-promise": "6.2.0",
     "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "^2.0.0",
     "mocha": "10.4.0",
     "node-tslint-rules": "1.20.3",
     "nyc": "15.1.0",
-    "sinon": "17.0.1",
+    "sinon": "18.0.0",
     "sinon-chai": "^3.7.0",
     "split2": "^4.2.0",
     "tail": "^2.2.6",
