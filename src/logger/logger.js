@@ -3,9 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.setLogLevel = exports.DisplaySeverityMap = exports.LogLevel = exports.LogSeverity = void 0;
+exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.DisplaySeverityMap = exports.LogLevel = exports.LogSeverity = void 0;
 const util_1 = __importDefault(require("util"));
-const pino_logger_1 = require("../pino/pino.logger");
 const trace_1 = require("../trace/trace");
 var LogSeverity;
 (function (LogSeverity) {
@@ -33,12 +32,9 @@ exports.DisplaySeverityMap = {
     fatal: 'Fatal',
 };
 const currentFolder = __dirname;
-// const ignoreFolders = [
-//   `${process.cwd()}/src/logger.ts`,
-//   `${process.cwd()}/src/logger4-node.ts`,
-//   `${process.cwd()}/node_modules/src/logger.ts`,
-//   `${process.cwd()}/node_modules/src/logger4-node.ts`,
-// ];
+function stringify(data) {
+    return JSON.stringify(data);
+}
 function generateMatchAndDoesNotMatchArray(input = '') {
     const positive = [];
     const negative = [];
@@ -62,33 +58,26 @@ function generateMatchAndDoesNotMatchArray(input = '') {
     });
     return [positive, negative];
 }
-let positive = [];
-let negative = [];
-let minLogLevelEnabled = exports.LogLevel.debug;
-const LOG_PATTERN = {
-    [LogSeverity.VERBOSE]: { positive: [], negative: [] },
-    [LogSeverity.INFO]: { positive: [], negative: [] },
-    [LogSeverity.WARN]: { positive: [], negative: [] },
-    [LogSeverity.DEBUG]: { positive: [], negative: [] },
-    [LogSeverity.ERROR]: { positive: [], negative: [] },
-    [LogSeverity.FATAL]: { positive: [], negative: [] },
-};
 function isNotMatchWithPatterns(patterns, value) {
     return patterns.every((pattern) => !new RegExp(`^${pattern}$`).test(value));
 }
 function isMatchWithPatterns(patterns, value) {
     return patterns.some((pattern) => new RegExp(`^${pattern}$`).test(value));
 }
-function setLogLevel(logSeverity) {
-    minLogLevelEnabled = exports.LogLevel[logSeverity] || exports.LogLevel[LogSeverity.DEBUG];
-}
-exports.setLogLevel = setLogLevel;
-function setLogPattern(pattern) {
-    ([positive, negative] = generateMatchAndDoesNotMatchArray(pattern));
+function setLogPattern(logPattern, pattern) {
+    logPattern.positive.splice(0, logPattern.positive.length);
+    logPattern.negative.splice(0, logPattern.positive.length);
+    const [positive, negative] = generateMatchAndDoesNotMatchArray(pattern);
+    logPattern.positive.push(...positive);
+    logPattern.negative.push(...negative);
 }
 exports.setLogPattern = setLogPattern;
-function setLogSeverityPattern(level, pattern) {
-    ([LOG_PATTERN[level].positive, LOG_PATTERN[level].negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []]);
+function setLogSeverityPattern(logSeverityPattern, level, pattern) {
+    logSeverityPattern[level].positive.splice(0, logSeverityPattern[level].positive.length);
+    logSeverityPattern[level].negative.splice(0, logSeverityPattern[level].positive.length);
+    const [positive, negative] = pattern ? generateMatchAndDoesNotMatchArray(pattern) : [[], []];
+    logSeverityPattern[level].positive.push(...positive);
+    logSeverityPattern[level].negative.push(...negative);
 }
 exports.setLogSeverityPattern = setLogSeverityPattern;
 class Logger {
@@ -97,26 +86,28 @@ class Logger {
             .filter((each) => (each instanceof Error))
             .map((each) => each.stack);
         if (!errorStacks.length) {
-            return undefined;
+            return '';
         }
-        return this.handleJSONSpecialCharacter(errorStacks.join('\\n|\\n'));
+        return errorStacks.join('\\n|\\n');
     }
     static jsonTransformArgs(...args) {
-        const message = util_1.default.format(...args.map((each) => {
+        return util_1.default.format(...args.map((each) => {
+            if (['string', 'number', 'boolean', 'bigint', 'function'].includes(typeof each)) {
+                return each;
+            }
+            return stringify(each);
+        }));
+    }
+    static transformArgs(...args) {
+        return args.map((each) => {
             if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
                 return each;
             }
-            return JSON.stringify(each);
-        }));
-        return this.handleJSONSpecialCharacter(message);
-    }
-    static handleJSONSpecialCharacter(message) {
-        return message
-            .replace(/\\/g, '\\\\')
-            .replace(/\t/g, '\\t')
-            .replace(/"/g, '\\"')
-            .replace(/\r\n/g, '\\r\\n')
-            .replace(/\n/g, '\\n');
+            if (each instanceof Error) {
+                return each;
+            }
+            return stringify(each);
+        });
     }
     verbose(formatter, ...args) {
         this.log(LogSeverity.VERBOSE, undefined, formatter, ...args);
@@ -145,19 +136,19 @@ class Logger {
             return;
         }
         if (this.config.jsonLogging()) {
-            const source = this.generateLogSource();
-            const logMessage = Logger.jsonTransformArgs(formatter, ...args);
-            pino_logger_1.pinoLogger.fatal({
-                className: this.name,
+            console.log(stringify({
                 level: logSeverity,
+                time: new Date().toISOString(),
+                className: this.name,
+                source: this.generateLogSource(),
+                message: Logger.jsonTransformArgs(formatter, ...args),
                 request: trace_1.Trace.getRequestInfo(),
-                extra: extraData,
+                extra: extraData || {},
                 stack: Logger.errorStack(formatter, ...args),
-                source,
-            }, logMessage);
+            }));
             return;
         }
-        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...this.transformArgs(...args)));
+        console.log(`${exports.DisplaySeverityMap[logSeverity]}:`, this.name, util_1.default.format(formatter, ...Logger.transformArgs(...args)));
     }
     generateLogSource() {
         const { stack } = new Error();
@@ -166,17 +157,17 @@ class Logger {
             //     && line.trim().startsWith('at '));
             .find((line) => !line.includes(currentFolder) && line.trim().startsWith('at '));
         if (!logSource) {
-            return undefined;
+            return {};
         }
         if (logSource[logSource.length - 1] === ')') {
             const [caller, filePath] = logSource.split(' (');
             if (!filePath) {
-                return undefined;
+                return {};
             }
             const filePathSplit = filePath.substring(0, filePath.length - 1).split('/');
             const [fileName, line, column] = filePathSplit.pop().split(':');
             if (!fileName || !line || !column) {
-                return undefined;
+                return {};
             }
             const path = filePathSplit.join('/');
             return {
@@ -191,7 +182,7 @@ class Logger {
         const filePathSplit = logSource.split('at ')[1].split('/');
         const [fileName, line, column] = filePathSplit.pop().split(':');
         if (!fileName || !line || !column) {
-            return undefined;
+            return {};
         }
         const path = filePathSplit.join('/');
         return {
@@ -202,34 +193,20 @@ class Logger {
             github: this.generateGithubLink(`${path}/${fileName}`, line),
         };
     }
-    transformArgs(...args) {
-        return args.map((each) => {
-            if (!this.config.stringLogging()) {
-                return each;
-            }
-            if (['string', 'number', 'boolean', 'bigint', 'function', 'undefined'].includes(typeof each)) {
-                return each;
-            }
-            if (each instanceof Error) {
-                return each;
-            }
-            return JSON.stringify(each);
-        });
-    }
     isLogEnabled(logSeverity) {
-        if (!isNotMatchWithPatterns(LOG_PATTERN[logSeverity].negative, this.name)) {
+        if (!isNotMatchWithPatterns(this.config.logSeverityPattern[logSeverity].negative, this.name)) {
             return false;
         }
-        if (isMatchWithPatterns(LOG_PATTERN[logSeverity].positive, this.name)) {
+        if (isMatchWithPatterns(this.config.logSeverityPattern[logSeverity].positive, this.name)) {
             return true;
         }
-        if (exports.LogLevel[logSeverity] < minLogLevelEnabled) {
+        if (exports.LogLevel[logSeverity] < this.config.minLogLevelEnabled()) {
             return false;
         }
-        if (!isNotMatchWithPatterns(negative, this.name)) {
+        if (!isNotMatchWithPatterns(this.config.logPattern.negative, this.name)) {
             return false;
         }
-        return isMatchWithPatterns(positive, this.name);
+        return isMatchWithPatterns(this.config.logPattern.positive, this.name);
     }
     generateGithubLink(file, line) {
         if (!this.config.github) {

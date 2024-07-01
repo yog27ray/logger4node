@@ -18,12 +18,20 @@ export declare const LogLevel: {
 export declare const DisplaySeverityMap: {
     [key in LogSeverity]: string;
 };
-export declare function setLogLevel(logSeverity: LogSeverity): void;
-export declare function setLogPattern(pattern: string): void;
-export declare function setLogSeverityPattern(level: LogSeverity, pattern: string): void;
+export declare interface LogPattern {
+    negative: Array<string>;
+    positive: Array<string>;
+}
+export declare type LogSeverityPattern = {
+    [key in LogSeverity]: LogPattern;
+};
+export declare function setLogPattern(logPattern: LogPattern, pattern: string): void;
+export declare function setLogSeverityPattern(logSeverityPattern: LogSeverityPattern, level: LogSeverity, pattern: string): void;
 declare interface LoggerConfig {
     github: GithubConfig;
-    stringLogging(): boolean;
+    logSeverityPattern: LogSeverityPattern;
+    logPattern: LogPattern;
+    minLogLevelEnabled(): number;
     jsonLogging(): boolean;
 }
 export declare class Logger {
@@ -31,7 +39,7 @@ export declare class Logger {
     private readonly config;
     private static errorStack;
     private static jsonTransformArgs;
-    private static handleJSONSpecialCharacter;
+    private static transformArgs;
     verbose(formatter: unknown, ...args: Array<unknown>): void;
     info(formatter: unknown, ...args: Array<unknown>): void;
     warn(formatter: unknown, ...args: Array<unknown>): void;
@@ -41,7 +49,6 @@ export declare class Logger {
     constructor(loggerName: string, config: LoggerConfig);
     log(logSeverity: LogSeverity, extraData: Record<string, unknown>, formatter: unknown, ...args: Array<unknown>): void;
     private generateLogSource;
-    private transformArgs;
     private isLogEnabled;
     private generateGithubLink;
 }

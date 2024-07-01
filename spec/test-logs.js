@@ -1,6 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.printLogWithNewLineAndSlashNCharacter = exports.printLogSingleLine = exports.printLogWithSpecialTabCharacter = exports.printLogWithBackSlashCharacter = exports.printLogWithMultipleEndCharacters = exports.printFatalLogsInDifferentType = exports.printLogsInDifferentType = exports.printLogsWithExtraFields = exports.printLogsInDifferentLevel = exports.wait = void 0;
+exports.loggerSpy = exports.stringLogsToJSON = exports.printLogWithNewLineAndSlashNCharacter = exports.printLogSingleLine = exports.printLogWithSpecialTabCharacter = exports.printLogWithBackSlashCharacter = exports.printLogWithMultipleEndCharacters = exports.printFatalLogsInDifferentType = exports.printLogsInDifferentType = exports.printLogsWithExtraFields = exports.printLogsInDifferentLevel = exports.wait = void 0;
+const node_fs_1 = __importDefault(require("node:fs"));
+const tail_1 = require("tail");
 const logger_1 = require("../src/logger/logger");
 function wait(time = 100) {
     return new Promise((resolve) => {
@@ -69,4 +74,32 @@ async function printLogWithNewLineAndSlashNCharacter(logger) {
     await wait(100);
 }
 exports.printLogWithNewLineAndSlashNCharacter = printLogWithNewLineAndSlashNCharacter;
+const spyConsoleLog = [];
+const loggerSpy = {
+    log(_data) {
+        let data = _data;
+        const json = JSON.parse(data);
+        json.time = spyConsoleLog.length;
+        data = JSON.stringify(json);
+        console.log(JSON.stringify(json));
+        spyConsoleLog.push(data);
+    },
+    reset() {
+        spyConsoleLog.splice(0, spyConsoleLog.length);
+    },
+};
+exports.loggerSpy = loggerSpy;
+node_fs_1.default.writeFileSync('./spec/test.logs', '', 'utf-8');
+new tail_1.Tail('./spec/test.logs')
+    .on('line', (data) => loggerSpy.log(data))
+    .on('error', (error) => console.log(error))
+    .watch();
+function stringLogsToJSON(spy) {
+    return new Array(spy.callCount).fill(0).map((zero, index) => {
+        const jsonLog = JSON.parse(spy.getCall(index).args.join(' '));
+        jsonLog.time = index;
+        return jsonLog;
+    });
+}
+exports.stringLogsToJSON = stringLogsToJSON;
 //# sourceMappingURL=test-logs.js.map
