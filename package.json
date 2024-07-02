@@ -1,6 +1,6 @@
 {
   "name": "logger4node",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "",
   "main": "index.js",
   "scripts": {
