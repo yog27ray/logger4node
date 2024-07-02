@@ -34,6 +34,6 @@ then
     exit 1
 fi
 git tag -a $TAG -m "$RELEASE_NAME"
-git push origin $TAG
+git push release $TAG
 gh release create $TAG --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
 echo "Release $RELEASE_NAME created successfully!"
