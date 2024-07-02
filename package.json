@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
-    "build": "rm -rf dist/* && tsc -p ./ && npm run copy-build-files",
+    "build": "rm -rf dist/* && rm -rf dist/.github && tsc -p ./ && npm run copy-build-files",
     "copy-build-files": "cp -r .github ./dist/.github && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "coverage": "nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
   },
