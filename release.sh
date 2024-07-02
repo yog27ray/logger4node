@@ -14,7 +14,7 @@ cd dist
 git add *
 git commit -m "$VERSION"
 git push release dist
-#npm publish
+npm publish
 REPO="yog27ray/logger4node"
 TAG="$VERSION"
 RELEASE_NAME="Release $VERSION"
