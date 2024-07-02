@@ -35,5 +35,5 @@ then
 fi
 git tag -a "$TAG" -m "$RELEASE_NAME"
 git push release "$TAG"
-gh release create "$TAG" --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
+ACTIONS_RUNNER_DEBUG=true ACTIONS_STEP_DEBUG=true gh release create "$TAG" --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
 echo "Release $RELEASE_NAME created successfully!"
