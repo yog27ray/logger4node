@@ -17,7 +17,7 @@ git push release dist
 npm publish
 REPO="yog27ray/logger4node"
 TAG="$VERSION"
-RELEASE_NAME="Release v$VERSION"
+RELEASE_NAME="Release $VERSION"
 RELEASE_BODY=""
 
 # Ensure gh is installed
