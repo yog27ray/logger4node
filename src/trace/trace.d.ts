@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import http from 'http';
 declare interface RequestInfo {
     id: string;

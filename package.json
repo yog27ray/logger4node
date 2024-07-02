@@ -1,10 +1,10 @@
 {
   "name": "logger4node",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm run copy-test-logger && NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
+    "test": "NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
     "build": "rm -rf dist/* && tsc -p ./ && npm run copy-build-files",
     "copy-build-files": "cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "coverage": "nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
@@ -13,7 +13,23 @@
     "type": "git",
     "url": "git+https://github.com/yog27ray/logger4node.git"
   },
-  "keywords": [],
+  "keywords": [
+    "logger",
+    "logging",
+    "nodejs",
+    "typescript",
+    "log-level",
+    "json-logging",
+    "session-logging",
+    "debugging",
+    "monitoring",
+    "log-management",
+    "error-logging",
+    "express",
+    "production",
+    "devops",
+    "trace-logging"
+  ],
   "author": "yog27ray",
   "license": "ISC",
   "bugs": {
@@ -29,28 +45,28 @@
     "@types/chai": "4.3.14",
     "@types/debug": "4.1.12",
     "@types/mocha": "10.0.6",
-    "@types/node": "20.14.8",
+    "@types/node": "20.14.9",
     "@types/sinon": "17.0.3",
-    "@typescript-eslint/eslint-plugin": "7.9.0",
+    "@typescript-eslint/eslint-plugin": "7.15.0",
     "@typescript-eslint/parser": "7.14.1",
     "chai": "4.4.1",
     "eslint": "8.57.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-promise": "6.2.0",
+    "eslint-plugin-promise": "6.4.0",
     "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "^2.0.0",
     "mocha": "10.4.0",
     "node-tslint-rules": "1.20.3",
-    "nyc": "15.1.0",
+    "nyc": "17.0.0",
     "sinon": "18.0.0",
     "sinon-chai": "^3.7.0",
     "split2": "^4.2.0",
     "tail": "^2.2.6",
     "ts-node": "10.9.2",
     "tslint": "6.1.3",
-    "typescript": "5.4.5"
+    "typescript": "5.5.3"
   },
   "nyc": {
     "include": [

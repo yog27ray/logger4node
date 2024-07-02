@@ -3,7 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loggerSpy = exports.stringLogsToJSON = exports.printLogWithNewLineAndSlashNCharacter = exports.printLogSingleLine = exports.printLogWithSpecialTabCharacter = exports.printLogWithBackSlashCharacter = exports.printLogWithMultipleEndCharacters = exports.printFatalLogsInDifferentType = exports.printLogsInDifferentType = exports.printLogsWithExtraFields = exports.printLogsInDifferentLevel = exports.wait = void 0;
+exports.loggerSpy = void 0;
+exports.wait = wait;
+exports.printLogsInDifferentLevel = printLogsInDifferentLevel;
+exports.printLogsWithExtraFields = printLogsWithExtraFields;
+exports.printLogsInDifferentType = printLogsInDifferentType;
+exports.printFatalLogsInDifferentType = printFatalLogsInDifferentType;
+exports.printLogWithMultipleEndCharacters = printLogWithMultipleEndCharacters;
+exports.printLogWithBackSlashCharacter = printLogWithBackSlashCharacter;
+exports.printLogWithSpecialTabCharacter = printLogWithSpecialTabCharacter;
+exports.printLogSingleLine = printLogSingleLine;
+exports.printLogWithNewLineAndSlashNCharacter = printLogWithNewLineAndSlashNCharacter;
+exports.stringLogsToJSON = stringLogsToJSON;
 const node_fs_1 = __importDefault(require("node:fs"));
 const tail_1 = require("tail");
 const logger_1 = require("../src/logger/logger");
@@ -12,7 +23,6 @@ function wait(time = 100) {
         setTimeout(() => resolve(), time);
     });
 }
-exports.wait = wait;
 async function printLogsInDifferentLevel(logger) {
     logger.verbose('verbose log');
     logger.debug('debug log');
@@ -21,42 +31,34 @@ async function printLogsInDifferentLevel(logger) {
     logger.error('error log');
     await wait(200);
 }
-exports.printLogsInDifferentLevel = printLogsInDifferentLevel;
 async function printLogsWithExtraFields(logger) {
     logger.log(logger_1.LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
     await wait(100);
 }
-exports.printLogsWithExtraFields = printLogsWithExtraFields;
 async function printLogsInDifferentType(logger) {
     logger.error('this is ', 1, true, { key1: 1, value: 2 });
     await wait(100);
 }
-exports.printLogsInDifferentType = printLogsInDifferentType;
 async function printFatalLogsInDifferentType(logger) {
     logger.fatal('this is ', 1, true, { key1: 1, value: 2 });
     await wait(100);
 }
-exports.printFatalLogsInDifferentType = printFatalLogsInDifferentType;
 async function printLogWithMultipleEndCharacters(logger) {
     logger.error('this is line1\nline2\nline2', { var: 1, var2: 2 });
     await wait(100);
 }
-exports.printLogWithMultipleEndCharacters = printLogWithMultipleEndCharacters;
 async function printLogWithBackSlashCharacter(logger) {
     logger.error('this is line1 \\"', { var: 1, var2: 2 });
     await wait(100);
 }
-exports.printLogWithBackSlashCharacter = printLogWithBackSlashCharacter;
 async function printLogWithSpecialTabCharacter(logger) {
     logger.error('this is line1 \t');
     await wait(100);
 }
-exports.printLogWithSpecialTabCharacter = printLogWithSpecialTabCharacter;
 async function printLogSingleLine(logger) {
     logger.error('this is string');
     await wait();
 }
-exports.printLogSingleLine = printLogSingleLine;
 async function printLogWithNewLineAndSlashNCharacter(logger) {
     try {
         throw new class TestError extends Error {
@@ -73,7 +75,6 @@ async function printLogWithNewLineAndSlashNCharacter(logger) {
     }
     await wait(100);
 }
-exports.printLogWithNewLineAndSlashNCharacter = printLogWithNewLineAndSlashNCharacter;
 const spyConsoleLog = [];
 const loggerSpy = {
     log(_data) {
@@ -101,5 +102,4 @@ function stringLogsToJSON(spy) {
         return jsonLog;
     });
 }
-exports.stringLogsToJSON = stringLogsToJSON;
 //# sourceMappingURL=test-logs.js.map

@@ -3,7 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logger = exports.setLogSeverityPattern = exports.setLogPattern = exports.DisplaySeverityMap = exports.LogLevel = exports.LogSeverity = void 0;
+exports.Logger = exports.DisplaySeverityMap = exports.LogLevel = exports.LogSeverity = void 0;
+exports.setLogPattern = setLogPattern;
+exports.setLogSeverityPattern = setLogSeverityPattern;
 const util_1 = __importDefault(require("util"));
 const trace_1 = require("../trace/trace");
 var LogSeverity;
@@ -71,7 +73,6 @@ function setLogPattern(logPattern, pattern) {
     logPattern.positive.push(...positive);
     logPattern.negative.push(...negative);
 }
-exports.setLogPattern = setLogPattern;
 function setLogSeverityPattern(logSeverityPattern, level, pattern) {
     logSeverityPattern[level].positive.splice(0, logSeverityPattern[level].positive.length);
     logSeverityPattern[level].negative.splice(0, logSeverityPattern[level].positive.length);
@@ -79,7 +80,6 @@ function setLogSeverityPattern(logSeverityPattern, level, pattern) {
     logSeverityPattern[level].positive.push(...positive);
     logSeverityPattern[level].negative.push(...negative);
 }
-exports.setLogSeverityPattern = setLogSeverityPattern;
 class Logger {
     static errorStack(...args) {
         const errorStacks = args
