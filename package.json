@@ -39,7 +39,7 @@
   "dependencies": {
     "async_hooks": "1.0.0",
     "util": "0.12.5",
-    "uuid": "9.0.1"
+    "uuid": "10.0.0"
   },
   "devDependencies": {
     "@types/chai": "4.3.14",
