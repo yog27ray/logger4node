@@ -39,5 +39,5 @@ gh release create "$TAG" --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
 
 sed -i '' 's/"name": "logger4node"/"name": "@yog27ray\/logger4node"/g' package.json
 sed -i '' 's/"name": "logger4node"/"name": "@yog27ray\/logger4node"/g' package-lock.json
-npm publish --registry=https://npm.pkg.github.com/  --access=public
+npm publish --registry=https://npm.pkg.github.com/
 echo "Release $RELEASE_NAME created successfully!"
