@@ -58,6 +58,7 @@ export class Logger4Node {
     this.github = option.github ? { ...option.github } : undefined;
     this.setLogLevel(process.env.DEBUG_LEVEL as LogSeverity);
     this.setLogPattern(process.env.DEBUG);
+    console.log('Default logging details:', process.env.DEBUG_LEVEL, process.env.DEBUG);
     Object.keys(LogLevel)
       .forEach((logSeverity: LogSeverity) => this.setLogSeverityPattern(
         logSeverity,

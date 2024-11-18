@@ -39,16 +39,16 @@
   "dependencies": {
     "async_hooks": "1.0.0",
     "util": "0.12.5",
-    "uuid": "9.0.1"
+    "uuid": "10.0.0"
   },
   "devDependencies": {
     "@types/chai": "4.3.14",
     "@types/debug": "4.1.12",
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.14.9",
+    "@types/mocha": "10.0.7",
+    "@types/node": "20.14.10",
     "@types/sinon": "17.0.3",
-    "@typescript-eslint/eslint-plugin": "7.15.0",
-    "@typescript-eslint/parser": "7.14.1",
+    "@typescript-eslint/eslint-plugin": "7.16.1",
+    "@typescript-eslint/parser": "7.16.1",
     "chai": "4.4.1",
     "eslint": "8.57.0",
     "eslint-config-airbnb": "19.0.4",
@@ -57,7 +57,7 @@
     "eslint-plugin-promise": "6.4.0",
     "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "^2.0.0",
-    "mocha": "10.4.0",
+    "mocha": "10.6.0",
     "node-tslint-rules": "1.20.3",
     "nyc": "17.0.0",
     "sinon": "18.0.0",
