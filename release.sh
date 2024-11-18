@@ -13,7 +13,7 @@ npm run build
 cd dist
 git add *
 git commit -m "$VERSION"
-git push release dist
+git push upstream dist
 npm publish
 REPO="yog27ray/logger4node"
 TAG="$VERSION"
@@ -34,8 +34,8 @@ then
     exit 1
 fi
 git tag -a "$TAG" -m "$RELEASE_NAME"
-git push release "$TAG"
-gh release create "$TAG" --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
+git push upstream "$TAG"
+gh upstream create "$TAG" --title "$RELEASE_NAME" --notes "$RELEASE_BODY"
 
 sed -i '' 's/"name": "logger4node"/"name": "@yog27ray\/logger4node"/g' package.json
 sed -i '' 's/"name": "logger4node"/"name": "@yog27ray\/logger4node"/g' package-lock.json
