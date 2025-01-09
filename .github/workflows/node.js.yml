@@ -25,8 +25,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: node_modules/eslint/bin/eslint.js  --ext .ts src
-    - run: node_modules/eslint/bin/eslint.js  --ext .ts spec
+    - run: node_modules/eslint/bin/eslint.js src
+    - run: node_modules/eslint/bin/eslint.js spec
     - run: node_modules/tslint/bin/tslint -p ./ -c src/tslint.json
     - run: node_modules/typescript/bin/tsc -p ./
     - run: rm -r dist

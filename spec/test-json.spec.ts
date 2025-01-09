@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { IncomingMessage, ServerResponse } from 'http';
-import sinon, { SinonSpy } from 'sinon';
+import sinon, { spy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import {
@@ -14,6 +14,8 @@ import {
   printLogWithNewLineAndSlashNCharacter,
   printLogWithSpecialTabCharacter, stringLogsToJSON, wait,
 } from './test-logs';
+
+type SinonSpy = sinon.SinonSpy;
 
 const currentFolder = __dirname;
 
@@ -43,7 +45,7 @@ describe('Logger4nodeJSON', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print all logs', async () => {
@@ -60,7 +62,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '13',
+            line: '15',
             column: '10',
           },
           message: 'verbose log',
@@ -75,7 +77,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '14',
+            line: '16',
             column: '10',
           },
           message: 'debug log',
@@ -90,7 +92,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '15',
+            line: '17',
             column: '10',
           },
           message: 'info log',
@@ -105,7 +107,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -120,7 +122,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -149,7 +151,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '13',
+            line: '15',
             column: '10',
           },
           message: 'verbose log',
@@ -164,7 +166,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '14',
+            line: '16',
             column: '10',
           },
           message: 'debug log',
@@ -179,7 +181,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '15',
+            line: '17',
             column: '10',
           },
           message: 'info log',
@@ -194,7 +196,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -209,7 +211,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -234,7 +236,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -249,7 +251,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -276,7 +278,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -291,7 +293,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -306,7 +308,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -329,7 +331,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '13',
+            line: '15',
             column: '10',
           },
           message: 'verbose log',
@@ -344,7 +346,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '14',
+            line: '16',
             column: '10',
           },
           message: 'debug log',
@@ -359,7 +361,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '15',
+            line: '17',
             column: '10',
           },
           message: 'info log',
@@ -374,7 +376,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -389,7 +391,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -404,7 +406,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '13',
+            line: '15',
             column: '10',
           },
           message: 'verbose log',
@@ -419,7 +421,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '14',
+            line: '16',
             column: '10',
           },
           message: 'debug log',
@@ -434,7 +436,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '15',
+            line: '17',
             column: '10',
           },
           message: 'info log',
@@ -449,7 +451,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -464,7 +466,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -489,7 +491,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '13',
+            line: '15',
             column: '10',
           },
           message: 'verbose log',
@@ -504,7 +506,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '14',
+            line: '16',
             column: '10',
           },
           message: 'debug log',
@@ -519,7 +521,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '15',
+            line: '17',
             column: '10',
           },
           message: 'info log',
@@ -534,7 +536,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '16',
+            line: '18',
             column: '10',
           },
           message: 'warn log',
@@ -549,7 +551,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentLevel',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '17',
+            line: '19',
             column: '10',
           },
           message: 'error log',
@@ -586,7 +588,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '13',
+          line: '15',
           column: '10',
         },
         message: 'verbose log',
@@ -601,7 +603,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '14',
+          line: '16',
           column: '10',
         },
         message: 'debug log',
@@ -616,7 +618,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '15',
+          line: '17',
           column: '10',
         },
         message: 'info log',
@@ -632,7 +634,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '16',
+          line: '18',
           column: '10',
         },
         message: 'warn log',
@@ -648,7 +650,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsInDifferentLevel',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '17',
+          line: '19',
           column: '10',
         },
         message: 'error log',
@@ -664,7 +666,7 @@ describe('Logger4nodeJSON', () => {
           caller: 'printLogsWithExtraFields',
           fileName: 'test-logs.ts',
           path: currentFolder,
-          line: '22',
+          line: '24',
           column: '10',
         },
         message: 'verbose log',
@@ -701,7 +703,7 @@ describe('Logger4nodeJSON', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print logs not only in string', async () => {
@@ -718,7 +720,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentType',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '27',
+            line: '29',
             column: '10',
           },
           message: 'this is  1 true {"key1":1,"value":2}',
@@ -740,7 +742,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogsInDifferentType',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '27',
+            line: '29',
             column: '10',
           },
           message: 'this is  1 true {"key1":1,"value":2}',
@@ -762,7 +764,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printFatalLogsInDifferentType',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '32',
+            line: '34',
             column: '10',
           },
           message: 'this is  1 true {"key1":1,"value":2}',
@@ -791,7 +793,7 @@ describe('Logger4nodeJSON', () => {
       logger.setLogPattern('Logger:*');
       logger.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should log multi line string in one line', async () => {
@@ -808,7 +810,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogWithMultipleEndCharacters',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '37',
+            line: '39',
             column: '10',
           },
           message: 'this is line1\nline2\nline2 {"var":1,"var2":2}',
@@ -830,7 +832,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogWithBackSlashCharacter',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '42',
+            line: '44',
             column: '10',
           },
           message: 'this is line1 \\" {"var":1,"var2":2}',
@@ -852,7 +854,7 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogWithSpecialTabCharacter',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '47',
+            line: '49',
             column: '10',
           },
           message: 'this is line1 \t',
@@ -895,7 +897,7 @@ describe('Logger4nodeJSON', () => {
       logger.setLogPattern('Logger:*');
       logger.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should log github detail', async () => {
@@ -912,9 +914,9 @@ describe('Logger4nodeJSON', () => {
             caller: 'printLogSingleLine',
             fileName: 'test-logs.ts',
             path: currentFolder,
-            line: '52',
+            line: '54',
             column: '10',
-            github: 'https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224/spec/test-logs.ts#L52',
+            github: 'https://github.com/yog27ray/logger4node/blob/fd4a2de07ed9e31d890370e05fb4b8a416f27224/spec/test-logs.ts#L54',
           },
           message: 'this is string',
         },

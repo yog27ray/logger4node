@@ -1,8 +1,10 @@
 import { expect } from 'chai';
-import sinon, { SinonSpy } from 'sinon';
+import sinon, { spy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import { loggerSpy, stringLogsToJSON, wait } from './test-logs';
+
+type SinonSpy = sinon.SinonSpy;
 
 const currentFolder = __dirname;
 
@@ -22,7 +24,7 @@ describe('Logger4nodeAnonymous', () => {
       logger.setLogPattern('Logger:*');
       logger.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should log object with string in proper json format', async () => {
@@ -40,7 +42,7 @@ describe('Logger4nodeAnonymous', () => {
           caller: 'Context.<anonymous>',
           fileName: 'test-json-annonomous.spec.ts',
           path: currentFolder,
-          line: '29',
+          line: '31',
           column: '22',
         },
         message: 'this is string {"var":1,"var2":2}',
