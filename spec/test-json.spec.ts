@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { IncomingMessage, ServerResponse } from 'http';
-import sinon, { SinonSpy } from 'sinon';
+import sinon, { spy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import {
@@ -14,6 +14,8 @@ import {
   printLogWithNewLineAndSlashNCharacter,
   printLogWithSpecialTabCharacter, stringLogsToJSON, wait,
 } from './test-logs';
+
+type SinonSpy = sinon.SinonSpy;
 
 const currentFolder = __dirname;
 
@@ -43,7 +45,7 @@ describe('Logger4nodeJSON', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print all logs', async () => {
@@ -701,7 +703,7 @@ describe('Logger4nodeJSON', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print logs not only in string', async () => {
@@ -791,7 +793,7 @@ describe('Logger4nodeJSON', () => {
       logger.setLogPattern('Logger:*');
       logger.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should log multi line string in one line', async () => {
@@ -895,7 +897,7 @@ describe('Logger4nodeJSON', () => {
       logger.setLogPattern('Logger:*');
       logger.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should log github detail', async () => {

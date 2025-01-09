@@ -1,7 +1,9 @@
 import fs from 'node:fs';
-import { SinonSpy } from 'sinon';
+import sinon from 'sinon';
 import { Tail } from 'tail';
 import { Logger, LogSeverity } from '../src/logger/logger';
+
+type SinonSpy = sinon.SinonSpy;
 
 export function wait(time: number = 100): Promise<void> {
   return new Promise((resolve: () => void) => {

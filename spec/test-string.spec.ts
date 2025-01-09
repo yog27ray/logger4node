@@ -1,7 +1,9 @@
 import { expect } from 'chai';
-import sinon, { SinonSpy } from 'sinon';
+import sinon, { spy } from 'sinon';
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
+
+type SinonSpy = sinon.SinonSpy;
 
 function printLogsInDifferentLevel(logger: Logger): void {
   logger.verbose('verbose log');
@@ -39,7 +41,7 @@ describe('Logger4nodeString', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print all logs', () => {
@@ -148,7 +150,7 @@ describe('Logger4nodeString', () => {
       logger2.setLogLevel(LogSeverity.VERBOSE);
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger1.setLogSeverityPattern(logSeverity, undefined));
       Object.keys(LogLevel).forEach((logSeverity: LogSeverity) => logger2.setLogSeverityPattern(logSeverity, undefined));
-      callbackSpy = sinon.spy(console, 'log');
+      callbackSpy = spy(console, 'log');
     });
 
     it('should print logs only in string', () => {
