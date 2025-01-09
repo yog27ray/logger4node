@@ -19,12 +19,6 @@ module.exports = [
           jsx: true,
         },
       },
-      globals: {
-        Parse: 'readonly', // or 'readonly' if you do not intend to reassign Parse
-        Table: 'readonly', // or 'readonly' if you do not intend to reassign Parse
-        console: 'readonly', // or 'readonly' if you do not intend to reassign Parse
-        Promise: 'readonly', // or 'readonly' if you do not intend to reassign Parse
-      },
     },
     plugins: {
       import: importPlugin,
