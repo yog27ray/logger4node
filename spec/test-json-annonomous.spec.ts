@@ -42,7 +42,7 @@ describe('Logger4nodeAnonymous', () => {
           caller: 'Context.<anonymous>',
           fileName: 'test-json-annonomous.spec.ts',
           path: currentFolder,
-          line: '29',
+          line: '31',
           column: '22',
         },
         message: 'this is string {"var":1,"var2":2}',
