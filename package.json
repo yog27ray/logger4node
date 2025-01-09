@@ -59,7 +59,7 @@
     "flush-write-stream": "^2.0.0",
     "mocha": "11.0.1",
     "node-tslint-rules": "1.20.3",
-    "nyc": "17.0.0",
+    "nyc": "17.1.0",
     "sinon": "19.0.2",
     "sinon-chai": "^3.7.0",
     "split2": "^4.2.0",
