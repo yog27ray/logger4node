@@ -20,6 +20,7 @@
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types/"],
     "strict": true,
+    "types": ["jest", "node"],
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strictFunctionTypes": false,
