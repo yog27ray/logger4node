@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node_modules/.bin/mocha './spec/**/*.spec.ts'",
+    "test": "NODE_ENV=test jest",
     "build": "rm -rf dist/* && rm -rf dist/.github && tsc -p ./ && npm run copy-build-files",
     "copy-build-files": "cp -r .github ./dist/.github && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
-    "coverage": "nyc mocha './spec/**/*.spec.ts' && nyc report --reporter=text-lcov > coverage1.lcov"
+    "coverage": "NODE_ENV=test jest --coverage && cp coverage/lcov.info coverage1.lcov"
   },
   "repository": {
     "type": "git",
@@ -42,26 +42,24 @@
     "uuid": "11.0.5"
   },
   "devDependencies": {
-    "@types/chai": "5.0.1",
     "@types/debug": "4.1.12",
-    "@types/mocha": "10.0.10",
+    "@types/jest": "^29.5.14",
     "@types/node": "22.10.7",
     "@types/sinon": "17.0.3",
     "@typescript-eslint/eslint-plugin": "8.19.1",
     "@typescript-eslint/parser": "8.21.0",
-    "chai": "4.5.0",
     "eslint": "9.18.0",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "2.0.0",
-    "mocha": "11.0.1",
+    "jest-simple-dot-reporter": "^1.0.5",
     "node-tslint-rules": "1.20.3",
     "nyc": "17.1.0",
     "sinon": "19.0.2",
-    "sinon-chai": "3.7.0",
     "split2": "4.2.0",
     "tail": "2.2.6",
+    "ts-jest": "^29.2.5",
     "ts-node": "10.9.2",
     "tslint": "6.1.3",
     "typescript": "5.7.3"
@@ -80,16 +78,5 @@
     "sourceMap": true,
     "instrument": true,
     "fullTrace": true
-  },
-  "mocha": {
-    "color": true,
-    "ui": "bdd",
-    "recursive": true,
-    "timeout": 20000,
-    "require": [
-      "ts-node/register/transpile-only"
-    ],
-    "reporter": "dot",
-    "exit": true
   }
 }

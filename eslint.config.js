@@ -71,7 +71,7 @@ module.exports = [
     },
   },
   {
-    files: ["**/*.spec.ts", "*.spec.ts", "src/test-env.ts", "src/setup.ts"],
+    files: ["**/*.test.ts", "*.test.ts", "src/test-env.ts", "src/setup.ts"],
     rules: {
       "prefer-promise-reject-errors": 0,
       "no-unused-expressions": [0],
@@ -81,6 +81,19 @@ module.exports = [
       "@typescript-eslint/no-misused-promises": [0],
       "max-classes-per-file": [0],
       "@typescript-eslint/no-unused-expressions": "off",
+    },
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        jest: "readonly",
+      },
     },
   },
 ];
