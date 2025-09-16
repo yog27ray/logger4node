@@ -5,6 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest",
+    "lint-src": "node_modules/eslint/bin/eslint.js src",
+    "lint-spec": "node_modules/eslint/bin/eslint.js spec",
+    "tslint": "node_modules/tslint/bin/tslint -p ./ -c src/tslint.json",
+    "tsc": "node_modules/typescript/bin/tsc -p ./ && rm -rf dist",
+    "lint": "npm run lint-src && npm run lint-spec && npm run tslint && npm run tsc",
     "build": "rm -rf dist/* && rm -rf dist/.github && tsc -p ./ && npm run copy-build-files",
     "copy-build-files": "cp -r .github ./dist/.github && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "coverage": "NODE_ENV=test jest --coverage && cp coverage/lcov.info coverage1.lcov"
@@ -39,11 +44,13 @@
   "dependencies": {
     "async_hooks": "1.0.0",
     "util": "0.12.5",
-    "uuid": "11.0.5"
+    "uuid": "13.0.0"
   },
   "devDependencies": {
+    "@babel/core": "7.28.4",
+    "@babel/preset-env": "7.28.3",
     "@types/debug": "4.1.12",
-    "@types/jest": "^30.0.0",
+    "@types/jest": "30.0.0",
     "@types/node": "24.5.0",
     "@types/sinon": "17.0.3",
     "@typescript-eslint/eslint-plugin": "8.44.0",
@@ -53,13 +60,13 @@
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "2.0.0",
-    "jest-simple-dot-reporter": "^1.0.5",
+    "jest-simple-dot-reporter": "1.0.5",
     "node-tslint-rules": "1.20.3",
     "nyc": "17.1.0",
     "sinon": "19.0.2",
     "split2": "4.2.0",
     "tail": "2.2.6",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
     "tslint": "6.1.3",
     "typescript": "5.9.2"
