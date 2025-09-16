@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/debug": "4.1.12",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/node": "24.5.0",
     "@types/sinon": "17.0.3",
     "@typescript-eslint/eslint-plugin": "8.44.0",
