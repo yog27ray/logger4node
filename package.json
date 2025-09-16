@@ -5,6 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest",
+    "lint-src": "node_modules/eslint/bin/eslint.js src",
+    "lint-spec": "node_modules/eslint/bin/eslint.js spec",
+    "tslint": "node_modules/tslint/bin/tslint -p ./ -c src/tslint.json",
+    "tsc": "node_modules/typescript/bin/tsc -p ./ && rm -rf dist",
+    "lint": "npm run lint-src && npm run lint-spec && npm run tslint && npm run tsc",
     "build": "rm -rf dist/* && rm -rf dist/.github && tsc -p ./ && npm run copy-build-files",
     "copy-build-files": "cp -r .github ./dist/.github && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "coverage": "NODE_ENV=test jest --coverage && cp coverage/lcov.info coverage1.lcov"
