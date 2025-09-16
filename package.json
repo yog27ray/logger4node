@@ -39,7 +39,7 @@
   "dependencies": {
     "async_hooks": "1.0.0",
     "util": "0.12.5",
-    "uuid": "11.0.5"
+    "uuid": "13.0.0"
   },
   "devDependencies": {
     "@types/debug": "4.1.12",
