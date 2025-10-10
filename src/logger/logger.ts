@@ -98,6 +98,7 @@ declare interface LoggerConfig {
   logPattern: LogPattern;
   minLogLevelEnabled(): number;
   jsonLogging(): boolean;
+  disableJsonStringify(): boolean;
 }
 
 export class Logger {
@@ -174,7 +175,7 @@ export class Logger {
       return;
     }
     if (this.config.jsonLogging()) {
-      console.log(stringify({
+      const data = {
         level: logSeverity,
         time: new Date().toISOString(),
         className: this.name,
@@ -183,7 +184,8 @@ export class Logger {
         request: Trace.getRequestInfo(),
         extra: extraData || {},
         stack: Logger.errorStack(formatter, ...args),
-      }));
+      };
+      console.log(this.config.disableJsonStringify() ? data : stringify(data));
       return;
     }
     console.log(
