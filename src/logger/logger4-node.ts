@@ -18,6 +18,8 @@ export class Logger4Node {
 
   private jsonLogging: boolean = false;
 
+  private disableJsonStringify: boolean = false;
+
   private minLogLevelEnabled: number = LogLevel[LogSeverity.DEBUG];
 
   private readonly github: GithubConfig;
@@ -53,6 +55,10 @@ export class Logger4Node {
     this.jsonLogging = jsonLogging;
   }
 
+  setDisableJsonStringify(disableJsonStringify: boolean): void {
+    this.disableJsonStringify = disableJsonStringify;
+  }
+
   constructor(applicationName: string, option: { github?: GithubConfig; } = {}) {
     this._applicationName = applicationName;
     this.github = option.github ? { ...option.github } : undefined;
@@ -72,6 +78,7 @@ export class Logger4Node {
       logPattern: this.logPattern,
       minLogLevelEnabled: () => this.minLogLevelEnabled,
       jsonLogging: () => this.jsonLogging,
+      disableJsonStringify: () => this.disableJsonStringify,
     });
   }
 }
