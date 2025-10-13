@@ -18,7 +18,7 @@ export class Trace {
   }
 
   static startNewRequest(callback?: () => unknown, track: Omit<RequestInfo, 'id'> = {}): void {
-    asyncLocalStorage.run({ ...track, id: uuid() }, () => callback());
+    asyncLocalStorage.run({ id: uuid(), ...track,  }, () => callback());
   }
 
   static getRequestInfo(): RequestInfo {
