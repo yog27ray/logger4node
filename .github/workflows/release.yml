@@ -40,9 +40,7 @@ jobs:
         git config --global user.name "Yogendra Singh"
         VERSION=$(npm version ${{ github.event.inputs.increment-type }})
         npm run build
-        cd dist
         npm publish
-        cd ..
         git push
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
