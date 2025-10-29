@@ -1,16 +1,38 @@
 {
   "name": "logger4node",
   "version": "1.0.53",
+  "type": "module",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/esm/index.js"
+    }
+  },
+  "files": [
+    "dist/**"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "prepack": "npm run build",
   "scripts": {
+    "clean": "mkdir -p dist; cd dist; rm -rf *;rm -rf .github",
     "test": "NODE_ENV=test jest",
     "lint-src": "node_modules/eslint/bin/eslint.js src",
     "lint-spec": "node_modules/eslint/bin/eslint.js spec",
-    "tslint": "node_modules/tslint/bin/tslint -p ./ -c src/tslint.json",
     "tsc": "node_modules/typescript/bin/tsc -p ./ && rm -rf dist",
-    "lint": "npm run lint-src && npm run lint-spec && npm run tslint && npm run tsc",
-    "build": "rm -rf dist/* && rm -rf dist/.github && tsc -p ./ && npm run copy-build-files",
+    "lint": "npm run lint-src && npm run lint-spec && npm run tsc",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build:bundles": "rollup -c",
+    "build": "npm run clean && npm run build:bundles && npm run build:types",
     "copy-build-files": "cp -r .github ./dist/.github && cp ./README.md ./dist/README.md && cp package.json ./dist/package.json && cp package-lock.json ./dist/package-lock.json",
     "coverage": "NODE_ENV=test jest --coverage && cp coverage/lcov.info coverage1.lcov"
   },
@@ -49,6 +71,10 @@
   "devDependencies": {
     "@babel/core": "7.28.5",
     "@babel/preset-env": "7.28.5",
+    "@rollup/plugin-commonjs": "28.0.9",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-typescript": "12.3.0",
     "@types/debug": "4.1.12",
     "@types/jest": "30.0.0",
     "@types/node": "24.9.1",
@@ -56,19 +82,19 @@
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "eslint": "9.38.0",
+    "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-perfectionist": "4.15.1",
     "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-typescript": "0.14.0",
     "flush-write-stream": "2.0.0",
     "jest-simple-dot-reporter": "1.0.5",
-    "node-tslint-rules": "1.20.3",
     "nyc": "17.1.0",
+    "rollup": "4.52.5",
     "sinon": "21.0.0",
     "split2": "4.2.0",
     "tail": "2.2.6",
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",
-    "tslint": "6.1.3",
     "typescript": "5.9.3"
   },
   "nyc": {

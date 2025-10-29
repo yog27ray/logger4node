@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "allowJs": true,
-    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
+    "isolatedModules": true,
     "sourceMap": true,
     "rootDir": "./",
     "module": "commonjs",
@@ -16,12 +15,13 @@
     "skipLibCheck": true,
     "moduleResolution": "node",
     "lib": ["es2019", "dom"],
+    "types": ["jest", "node"],
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types/"],
     "strict": true,
-    "types": ["jest", "node"],
+    "declaration": true,
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strictFunctionTypes": false,
@@ -30,8 +30,12 @@
   "exclude": [
     "node_modules",
     "typings",
-    "server/setup.ts",
-    "**/*.js"
+    "**/*.js",
+    "eslint.config.cjs",
+    "rollup.config.cjs",
+    "jest.config.cjs",
+    "*.cjs",
+    "*.mjs"
   ],
   "filesGlob": [],
   "awesomeTypescriptLoaderOptions": {

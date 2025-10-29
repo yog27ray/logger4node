@@ -1,4 +1,5 @@
 import sinon, { spy } from 'sinon';
+
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 
@@ -130,13 +131,11 @@ describe('Logger4nodeString', () => {
   describe('logging in different type', () => {
     let callbackSpy: SinonSpy;
     let logger1: Logger4Node;
-    let logger1Instance1: Logger;
     let logger2: Logger4Node;
     let logger2Instance1: Logger;
 
     beforeAll(() => {
       logger1 = new Logger4Node('Logger1');
-      logger1Instance1 = logger1.instance('Instance1');
       logger2 = new Logger4Node('Logger2');
       logger2.setStringLogging(true);
       logger2Instance1 = logger2.instance('Instance1');
