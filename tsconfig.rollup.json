@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",                  // Rollup handles modules
+    "moduleResolution": "Bundler",       // No NodeNext strictness here
+    "target": "ES2019",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "noEmit": false,
+    "declaration": false                 // declarations emitted by tsconfig.types.json
+  },
+  "include": ["src/**/*"]
+}
