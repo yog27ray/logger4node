@@ -41,7 +41,7 @@ describe('Logger4nodeAnonymous', () => {
           caller: 'Object.<anonymous>',
           column: '22',
           fileName: 'test-json-annonomous.test.ts',
-          line: '30',
+          line: '31',
           path: currentFolder,
         },
         stack: '',
