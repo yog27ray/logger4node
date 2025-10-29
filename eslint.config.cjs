@@ -74,16 +74,16 @@ module.exports = [
   {
     files: ['**/*.d.ts', '**/*.d.cts', '**/*.d.mts'],
     rules: {
-      '@typescript-eslint/array-type': 'off',
-      '@typescript-eslint/no-namespace': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
-      quotes: 'off',
+      '@typescript-eslint/array-type': [0],
+      '@typescript-eslint/no-namespace': [0],
+      '@typescript-eslint/no-require-imports': [0],
+      quotes: [0],
     },
   },
 
   // Tests
   {
-    files: ['**/*.spec.ts', '**/*.test.ts', '*.spec.ts', '*.test.ts'],
+    files: ['**/*.spec.ts', '**/*.test.ts', '*.spec.ts', '*.test.ts', 'spec/test-logs.ts'],
     languageOptions: {
       globals: {
         describe: 'readonly',
@@ -98,10 +98,12 @@ module.exports = [
       },
     },
     rules: {
-      'import/no-extraneous-dependencies': 'off',
-      'no-unused-expressions': 'off',
-      'max-classes-per-file': 'off',
-      'promise/no-callback-in-promise': 'off',
+      'import/no-extraneous-dependencies': [0],
+      'no-unused-expressions': [0],
+      'max-classes-per-file': [0],
+      'promise/no-callback-in-promise': [0],
+      '@typescript-eslint/no-misused-promises': [0],
+      '@typescript-eslint/no-unsafe-member-access': [0],
     },
   },
 ];

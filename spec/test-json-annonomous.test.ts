@@ -1,4 +1,5 @@
 import sinon, { spy } from 'sinon';
+
 import { Logger, LogLevel, LogSeverity } from '../src/logger/logger';
 import { Logger4Node } from '../src/logger/logger4-node';
 import { loggerSpy, stringLogsToJSON, wait } from './test-logs';
@@ -32,19 +33,19 @@ describe('Logger4nodeAnonymous', () => {
       expect(callbackSpy.callCount).toBe(1);
       const logs = stringLogsToJSON(callbackSpy);
       expect(logs).toEqual([{
-        level: 'error',
-        time: 0,
-        extra: {},
-        stack: '',
         className: 'Logger:Instance',
+        extra: {},
+        level: 'error',
+        message: 'this is string {"var":1,"var2":2}',
         source: {
           caller: 'Object.<anonymous>',
-          fileName: 'test-json-annonomous.test.ts',
-          path: currentFolder,
-          line: '30',
           column: '22',
+          fileName: 'test-json-annonomous.test.ts',
+          line: '30',
+          path: currentFolder,
         },
-        message: 'this is string {"var":1,"var2":2}',
+        stack: '',
+        time: 0,
       }]);
     });
 

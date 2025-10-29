@@ -1,14 +1,14 @@
 import fs from 'node:fs';
 import sinon from 'sinon';
 import { Tail } from 'tail';
+
 import { Logger, LogSeverity } from '../src/logger/logger';
 
 type SinonSpy = sinon.SinonSpy;
 
-export function wait(time: number = 100): Promise<void> {
-  return new Promise((resolve: () => void) => {
-    setTimeout(() => resolve(), time);
-  });
+export async function printFatalLogsInDifferentType(logger: Logger): Promise<void> {
+  logger.fatal('this is ', 1, true, { key1: 1, value: 2 });
+  await wait(100);
 }
 
 export async function printLogsInDifferentLevel(logger: Logger): Promise<void> {
@@ -20,23 +20,18 @@ export async function printLogsInDifferentLevel(logger: Logger): Promise<void> {
   await wait(200);
 }
 
-export async function printLogsWithExtraFields(logger: Logger): Promise<void> {
-  logger.log(LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
-  await wait(100);
-}
-
 export async function printLogsInDifferentType(logger: Logger): Promise<void> {
   logger.error('this is ', 1, true, { key1: 1, value: 2 });
   await wait(100);
 }
 
-export async function printFatalLogsInDifferentType(logger: Logger): Promise<void> {
-  logger.fatal('this is ', 1, true, { key1: 1, value: 2 });
-  await wait(100);
+export async function printLogSingleLine(logger: Logger): Promise<void> {
+  logger.error('this is string');
+  await wait();
 }
 
-export async function printLogWithMultipleEndCharacters(logger: Logger): Promise<void> {
-  logger.error('this is line1\nline2\nline2', { var: 1, var2: 2 });
+export async function printLogsWithExtraFields(logger: Logger): Promise<void> {
+  logger.log(LogSeverity.ERROR, { extraField: 'extraValue' }, 'verbose log');
   await wait(100);
 }
 
@@ -45,14 +40,9 @@ export async function printLogWithBackSlashCharacter(logger: Logger): Promise<vo
   await wait(100);
 }
 
-export async function printLogWithSpecialTabCharacter(logger: Logger): Promise<void> {
-  logger.error('this is line1 \t');
+export async function printLogWithMultipleEndCharacters(logger: Logger): Promise<void> {
+  logger.error('this is line1\nline2\nline2', { var: 1, var2: 2 });
   await wait(100);
-}
-
-export async function printLogSingleLine(logger: Logger): Promise<void> {
-  logger.error('this is string');
-  await wait();
 }
 
 export async function printLogWithNewLineAndSlashNCharacter(logger: Logger): Promise<void> {
@@ -73,6 +63,17 @@ export async function printLogWithNewLineAndSlashNCharacter(logger: Logger): Pro
     logger.error(error);
   }
   await wait(100);
+}
+
+export async function printLogWithSpecialTabCharacter(logger: Logger): Promise<void> {
+  logger.error('this is line1 \t');
+  await wait(100);
+}
+
+export function wait(time = 100): Promise<void> {
+  return new Promise((resolve: () => void) => {
+    setTimeout(() => resolve(), time);
+  });
 }
 
 const spyConsoleLog: Array<string> = [];
