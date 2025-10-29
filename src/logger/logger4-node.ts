@@ -14,50 +14,26 @@ export class Logger4Node {
 
   private readonly _applicationName: string;
 
-  private stringLogging: boolean = false;
-
-  private jsonLogging: boolean = false;
-
-  private disableJsonStringify: boolean = false;
-
-  private minLogLevelEnabled: number = LogLevel[LogSeverity.DEBUG];
+  private disableJsonStringify = false;
 
   private readonly github: GithubConfig;
 
+  private jsonLogging = false;
+
+  private readonly logPattern: LogPattern = { negative: [], positive: [] };
+
   private readonly logSeverityPattern: LogSeverityPattern = {
-    [LogSeverity.FATAL]: { positive: [], negative: [] },
-    [LogSeverity.ERROR]: { positive: [], negative: [] },
-    [LogSeverity.WARN]: { positive: [], negative: [] },
-    [LogSeverity.INFO]: { positive: [], negative: [] },
-    [LogSeverity.DEBUG]: { positive: [], negative: [] },
-    [LogSeverity.VERBOSE]: { positive: [], negative: [] },
+    [LogSeverity.DEBUG]: { negative: [], positive: [] },
+    [LogSeverity.ERROR]: { negative: [], positive: [] },
+    [LogSeverity.FATAL]: { negative: [], positive: [] },
+    [LogSeverity.INFO]: { negative: [], positive: [] },
+    [LogSeverity.VERBOSE]: { negative: [], positive: [] },
+    [LogSeverity.WARN]: { negative: [], positive: [] },
   };
 
-  private readonly logPattern: LogPattern = { positive: [], negative: [] };
+  private minLogLevelEnabled: number = LogLevel[LogSeverity.DEBUG];
 
-  setLogLevel(logSeverity: LogSeverity = process.env.DEBUG_LEVEL as LogSeverity): void {
-    this.minLogLevelEnabled = LogLevel[logSeverity] || LogLevel[LogSeverity.DEBUG];
-  }
-
-  setLogPattern(pattern: string = process.env.DEBUG): void {
-    setLogPattern(this.logPattern, pattern);
-  }
-
-  setLogSeverityPattern(level: LogSeverity, pattern?: string): void {
-    setLogSeverityPattern(this.logSeverityPattern, level, pattern || process.env[`LOG_${level.toUpperCase()}`]);
-  }
-
-  setStringLogging(stringOnly: boolean): void {
-    this.stringLogging = stringOnly;
-  }
-
-  setJsonLogging(jsonLogging: boolean): void {
-    this.jsonLogging = jsonLogging;
-  }
-
-  setDisableJsonStringify(disableJsonStringify: boolean): void {
-    this.disableJsonStringify = disableJsonStringify;
-  }
+  private stringLogging = false;
 
   constructor(applicationName: string, option: { github?: GithubConfig; } = {}) {
     this._applicationName = applicationName;
@@ -73,12 +49,36 @@ export class Logger4Node {
 
   instance(name: string): Logger {
     return new Logger(`${this._applicationName}:${name}`, {
-      github: this.github,
-      logSeverityPattern: this.logSeverityPattern,
-      logPattern: this.logPattern,
-      minLogLevelEnabled: () => this.minLogLevelEnabled,
-      jsonLogging: () => this.jsonLogging,
       disableJsonStringify: () => this.disableJsonStringify,
+      github: this.github,
+      jsonLogging: () => this.jsonLogging,
+      logPattern: this.logPattern,
+      logSeverityPattern: this.logSeverityPattern,
+      minLogLevelEnabled: () => this.minLogLevelEnabled,
     });
+  }
+
+  setDisableJsonStringify(disableJsonStringify: boolean): void {
+    this.disableJsonStringify = disableJsonStringify;
+  }
+
+  setJsonLogging(jsonLogging: boolean): void {
+    this.jsonLogging = jsonLogging;
+  }
+
+  setLogLevel(logSeverity: LogSeverity = process.env.DEBUG_LEVEL as LogSeverity): void {
+    this.minLogLevelEnabled = LogLevel[logSeverity] || LogLevel[LogSeverity.DEBUG];
+  }
+
+  setLogPattern(pattern: string = process.env.DEBUG): void {
+    setLogPattern(this.logPattern, pattern);
+  }
+
+  setLogSeverityPattern(level: LogSeverity, pattern?: string): void {
+    setLogSeverityPattern(this.logSeverityPattern, level, pattern || process.env[`LOG_${level.toUpperCase()}`]);
+  }
+
+  setStringLogging(stringOnly: boolean): void {
+    this.stringLogging = stringOnly;
   }
 }

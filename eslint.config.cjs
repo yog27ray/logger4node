@@ -1,99 +1,107 @@
-/* eslint-disable no-undef */
-const importPlugin = require("eslint-plugin-import");
-const { configs } = require("@eslint/js");
-const promisePlugin = require("eslint-plugin-promise");
-const typescriptEslintParser = require("@typescript-eslint/parser"); // Import parser object
-const typescriptEslintPlugin = require("@typescript-eslint/eslint-plugin"); // Import plugin
+const importPlugin = require('eslint-plugin-import');
+const { configs: jsConfigs } = require('@eslint/js');
+const promisePlugin = require('eslint-plugin-promise');
+const tsParser = require('@typescript-eslint/parser');
+const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const globals = require('globals');
+const perfectionist = require('eslint-plugin-perfectionist'); // for deterministic import/object sorting
 
 module.exports = [
-  configs.recommended,
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      '**/*.d.ts',
+      '**/*.d.cts',
+      '**/*.d.mts',
+      './src/allocation-set',
+    ],
+  },
+  jsConfigs.recommended,
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
-      parser: typescriptEslintParser, // Use parser object directly
+      parser: tsParser,
       parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        project: "./tsconfig.json",
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        projectService: true,
+        tsconfigRootDir: process.cwd(),
       },
+      globals: { ...globals.node },
     },
     plugins: {
       import: importPlugin,
       promise: promisePlugin,
-      "@typescript-eslint": typescriptEslintPlugin,
+      '@typescript-eslint': tsPlugin,
+      perfectionist,
     },
     settings: {
       'import/resolver': {
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx']
-        },
+        typescript: { project: './tsconfig.json' },
+        node: { extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'] },
       },
     },
     rules: {
       ...importPlugin.configs.recommended.rules,
       ...promisePlugin.configs.recommended.rules,
-      ...typescriptEslintPlugin.configs.recommended.rules,
-      ...typescriptEslintPlugin.configs["recommended-requiring-type-checking"].rules,
-      "no-console": [0],
-      "no-shadow": "off",
-      "@typescript-eslint/no-shadow": ["error"],
-      "@typescript-eslint/no-unused-vars": ["error"],
-      "@typescript-eslint/no-inferrable-types": [0],
-      "@typescript-eslint/explicit-function-return-type": ["error"],
-      "@typescript-eslint/no-explicit-any": [0],
-      "no-async-promise-executor": [0],
-      "promise/no-callback-in-promise": [0],
-      "promise/no-return-wrap": [0],
-      "require-atomic-updates": [0],
-      "indent": ["error", 2, { "FunctionDeclaration": { "parameters": "first"}, "SwitchCase": 1 }],
-      "function-paren-newline": [0],
-      "object-curly-newline": ["error", { "consistent": true }],
-      "prefer-destructuring": ["error", {"object": true, "array": false}],
-      "no-restricted-globals": [0],
-      "no-multiple-empty-lines": "error",
-      "max-len": ["error", 140],
-      "no-unused-vars": [0],
-      "no-return-assign": [0],
-      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-      "import/extensions": [0],
-      "@typescript-eslint/no-unsafe-member-access": [0],
-      "@typescript-eslint/no-unsafe-call": [0],
-      "@typescript-eslint/no-unsafe-assignment": [0],
-      "import/prefer-default-export": [0],
-      "no-use-before-define": ["error", { "functions": true, "classes": true }],
-      "import/no-unresolved": [0],
-      "no-underscore-dangle": [0],
-      "no-undef": 0,
-      "new-cap": [2, { "capIsNewExceptions": [] }]
+      ...tsPlugin.configs.recommended.rules,
+      ...((tsPlugin.configs['recommended-type-checked'] || {}).rules || {}),
+      ...((tsPlugin.configs['stylistic-type-checked'] || {}).rules || {}),
+      ...((perfectionist.configs['recommended-natural'] || {}).rules || {}),
+      '@typescript-eslint/array-type': ['error', { default: 'generic', readonly: 'generic' }],
+      "@typescript-eslint/prefer-nullish-coalescing": [0],
+      'max-len': ['error', 140],
+      'promise/no-callback-in-promise': [0],
+      '@typescript-eslint/no-unsafe-call': [0],
+      'class-methods-use-this': [0],
+      'import/prefer-default-export': [0],
+      'key-spacing': 'error',
+      'import/named': [0],
+      'import/no-unresolved': [0],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        vars: 'local',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      }],
+      'import/no-extraneous-dependencies': ['error', { 'devDependencies': true }],
+      'import/extensions': ['error', 'ignorePackages', { 'js': 'never', 'jsx': 'never', 'ts': 'never', 'tsx': 'never' }]
     },
   },
+
+  // Type declaration files: relax some checks
   {
-    files: ["**/*.test.ts", "*.test.ts", "src/test-env.ts", "src/setup.ts"],
+    files: ['**/*.d.ts', '**/*.d.cts', '**/*.d.mts'],
     rules: {
-      "prefer-promise-reject-errors": 0,
-      "no-unused-expressions": [0],
-      "@typescript-eslint/require-await": [0],
-      "@typescript-eslint/no-unused-vars": [0],
-      "@typescript-eslint/camelcase": [0],
-      "@typescript-eslint/no-misused-promises": [0],
-      "max-classes-per-file": [0],
-      "@typescript-eslint/no-unused-expressions": "off",
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/no-namespace': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      quotes: 'off',
     },
+  },
+
+  // Tests
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '*.spec.ts', '*.test.ts'],
     languageOptions: {
       globals: {
-        describe: "readonly",
-        it: "readonly",
-        test: "readonly",
-        expect: "readonly",
-        beforeAll: "readonly",
-        afterAll: "readonly",
-        beforeEach: "readonly",
-        afterEach: "readonly",
-        jest: "readonly",
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly',
       },
+    },
+    rules: {
+      'import/no-extraneous-dependencies': 'off',
+      'no-unused-expressions': 'off',
+      'max-classes-per-file': 'off',
+      'promise/no-callback-in-promise': 'off',
     },
   },
 ];
