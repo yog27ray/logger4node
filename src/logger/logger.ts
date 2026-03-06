@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-objects */
 import util from 'util';
 
 import { Trace } from '../trace/trace';
@@ -19,12 +20,12 @@ export declare interface GithubConfig {
 }
 
 export const LogLevel: Record<LogSeverity, number> = {
+  verbose: 1,
   debug: 2,
+  info: 3,
+  warn: 4,
   error: 5,
   fatal: 6,
-  info: 3,
-  verbose: 1,
-  warn: 4,
 };
 
 export const DisplaySeverityMap: Record<LogSeverity, string> = {
