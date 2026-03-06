@@ -26,9 +26,12 @@
   "scripts": {
     "clean": "mkdir -p dist; cd dist; rm -rf *;rm -rf .github",
     "test": "NODE_ENV=test jest",
+    "lint-src-fix": "node_modules/eslint/bin/eslint.js src --fix",
+    "lint-spec-fix": "node_modules/eslint/bin/eslint.js spec --fix",
     "lint-src": "node_modules/eslint/bin/eslint.js src",
     "lint-spec": "node_modules/eslint/bin/eslint.js spec",
     "tsc": "node_modules/typescript/bin/tsc -p ./ && rm -rf dist",
+    "lint-fix": "npm run lint-src-fix && npm run lint-spec-fix && npm run tsc",
     "lint": "npm run lint-src && npm run lint-spec && npm run tsc",
     "build:types": "tsc -p tsconfig.types.json",
     "build:bundles": "rollup -c",
