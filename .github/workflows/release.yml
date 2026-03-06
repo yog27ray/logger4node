@@ -21,13 +21,16 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     concurrency:
       group: release
       cancel-in-progress: true
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.pat_github }}
+        ref: master
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
@@ -41,7 +44,5 @@ jobs:
         git config --global user.name "Yogendra Singh"
         VERSION=$(npm version ${{ github.event.inputs.increment-type }})
         npm run build
-        npm publish
+        npm publish --provenance
         git push
-      env:
-        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
