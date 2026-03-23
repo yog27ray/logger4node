@@ -78,7 +78,7 @@
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-typescript": "12.3.0",
-    "@types/debug": "4.1.12",
+    "@types/debug": "4.1.13",
     "@types/jest": "30.0.0",
     "@types/node": "25.3.5",
     "@types/sinon": "21.0.0",
