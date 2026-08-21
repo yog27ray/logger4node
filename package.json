@@ -92,7 +92,7 @@
     "flush-write-stream": "2.0.0",
     "jest-simple-dot-reporter": "1.0.5",
     "nyc": "18.0.0",
-    "rollup": "4.59.0",
+    "rollup": "4.60.0",
     "sinon": "21.0.2",
     "split2": "4.2.0",
     "tail": "2.2.6",
