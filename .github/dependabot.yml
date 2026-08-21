@@ -10,9 +10,6 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      - dependency-name: "@babel/core"
-        update-types:
-          - "version-update:semver-major"
       - dependency-name: "typescript"
         update-types:
           - "version-update:semver-major"
@@ -23,6 +20,9 @@ updates:
         update-types:
           - "version-update:semver-major"
     groups:
+      babel:
+        patterns:
+          - "@babel/*"
       eslint-deps:
         patterns:
           - "@typescript-eslint/*"
