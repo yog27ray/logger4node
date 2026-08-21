@@ -10,6 +10,9 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
+      - dependency-name: "@babel/core"
+        update-types:
+          - "version-update:semver-major"
       - dependency-name: "typescript"
         update-types:
           - "version-update:semver-major"
